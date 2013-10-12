@@ -1,0 +1,237 @@
+%=========================================================================
+% (c) Michal Bidlo, Bohuslav Křena, 2008
+
+\chapter{Introduction}\label{introduction}
+
+Subject of this thesis project is constructing a C programming language compiler for the soft-core processor PicoBlaze-6.
+
+    \section{The C Programming Language}
+
+    %% Tady budou chtit citace... ono ostatne asi vsude kde uvadim nejake roky
+
+    The C programming language was created in the seventies %% TODO spisovne?
+    of the twentieth century by Dennis Ritchie and Ken Thompson. In this project, I focused mainly on implementing its two latest standards, ISO/IEC 9899:1999 and partially ISO/IEC 9899:2011.
+
+    \section{The Previous Project}
+    Similar thesis topic was elaborated by Jakub Horník as his %% TODO citace
+    master's thesis in year 2011.
+
+    While he was writing the thesis, a new version of the target processor was released (see chapter~\ref{processor}). More of the resulting application is discussed in section~\ref{prev_pbcc}.
+
+\chapter{The PicoBlaze Processor}\label{processor}
+
+Picoblaze is a 8-bit processor created by Xilinx for their Spartan and Virtex Field-programmable gate array (FPGA) series as an embeddable circuit to implement sequential programming in the otherwise parallel FPGA architecture. This of course means the processor is not meant to be physically manufactured, yet it would be possible.
+
+Historically, the name of the design was \texttt{KCPSM}, as for Ken Chapman's Programmable State Machine. This term is now still used in the FPGA design as the components are still caled \texttt{kcpsmX} where the \texttt{X} stands for the version of the processor.
+
+The most up to date version is now 6 with its latest release 5 made public on 30 September 2012. The previous version, 3, had its last 7th revision released in October 2003. %% TODO citace?
+
+    \section{Main Features}
+
+    %% TODO myslim ze by nebylo uplne od veci predelat tohle na tabulku
+
+    Programs can consist of up to 4096 instructions.
+
+    The processor can be included directly in the FPGA design without any other components needed.
+
+    Offers up to 256 bytes of scratchpad RAM.
+
+    Two banks of 16 8-bit registers.
+
+    8-bit Arithmetic-Logic Unit supporting shifting, adding and subtracting, XOR, OR, AND, comparing and testing.using the implemented carry and zero flag.
+
+    256 8-bit output ports.
+
+    \section{PicoBlaze-3 and PicoBlaze-6 Difference}
+
+    There were major changes done to the PicoBlaze in the upgrade to the new version (that is still backwards-compatible). I'll list the ones those are important for this project in descending order of importance or impact to programming in C and the compiler itself.
+
+
+        \subsection{New \texttt{JUMP@} and \texttt{CALL@} Instructions}
+
+        Indirect jumps and calls, provided the address of the function or label, are possible in the new version.
+
+        This improves compatibility with C programming style %% TODO nevim jak to rict :(
+        as it allows function pointers to be compiled in the code.
+
+        \subsection{Program Memory Changes}
+
+        Due to the two newly added memory addressing pins, it is possible to address four times more program memory (now up to 4K), increasing the possible program size and complexity.
+
+        \subsection{RAM Changes}
+
+        The amount of addressable RAM from the program was increased to up to 256 bytes from 64, yet it depends on the target chip the user will be using. This was achieved by modifying the opcodes of instructions of the processor.
+
+        \subsection{Call stack}
+
+        Only 30 levels of function call depth are now available compared to 31 of KCPSM3.
+
+        \subsection{\texttt{ADDCY} and \texttt{SUBCY} Instruction Changes}
+
+        
+
+        \subsection{New \texttt{REGBANK} and \texttt{STAR} Instructions}
+
+        The new version of the processor now provides two sets of 16 general purpose registers that are switchable using the \texttt{REGBANK} instruction as only one of the sets can be accessed at a time.
+        To store values in the inactive bank, \texttt{STAR} instruction is provided - it stores a value from the active bank register in an other register that is in the inactive one.
+
+
+        \subsection{New \texttt{COMPARECY} and \texttt{TESTCY} Instructions}
+
+        Instructions added to make comparing multi-byte types easier. They store the flags and propagate it according to the progress through the single bytes.
+
+        \subsection{New \texttt{LOAD\&RETURN} and \texttt{STRING} Instructions}
+
+        
+
+        \subsection{New \texttt{OUTPUTK} Instruction}
+
+
+
+\chapter{Existing Solutions}\label{existing}
+
+    \section{PCComp}\label{pccomp}
+
+    Picoblaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge, %% TODO link
+    yet there are no files to download or source code in the repository and the only relevant activity visible is a question where to actually download the compiler.
+
+    I managed to find a Windows binary in version 1.8.4 in a web archive and a manual describing the compiler's features, both from year 2005 or 2006.
+
+    It supports compiling programs for PicoBlaze, PicoBlaze-2 and PicoBlaze-3.
+
+    However, the limitations of the compiler are vast. It generates stack-based code for processor that lacks any stack and the implementation of the C standard is not complete. Type conversions are missing. It is also impossible to use variable modifying keywords like \texttt{volatile}. But it basically doesn't matter as the compiler doesn't do any optimization %% TODO: optimiZation nebo optimiSation?
+    of the resulting code except unused variable detection.
+
+    To list issues compared in the %%TODO ref
+    Only byte and word (1 and 2 bytes) types are supported and their conversions aren't always possible. Only one-dimensional arrays and no pointer arithmetic is included in the compiler. Global variables can be defined only on the global level.
+
+    The compiled assembler is often buggy or even nonfunctional and probability of this is increasing with complexity of code and expressions used.
+
+    More on this topic is discussed in paper by Zbyněk Křivka and Rudolf Schönecker %% TODO link bibliografie nebo tak nejak
+
+
+
+    \section{PBCC}\label{prev_pbcc}
+
+    %% FIXME ach jo, tohle je fakt hrozna cast, mel bych to prepsat, ty vety nedavaji smysl a nenavazuji
+
+    PicoBlaze C Compiler is a project sponsored by Virtuální laboratoř aplikovaných mikroprocesorů %% TODO overit
+    realized on the Faculty of Information Technology, Brno University of Technology.
+
+    It was written in years 2010 - 2011 by Jakub Horník as a part of his master's thesis and is now maintained by Zbyněk Křivka, supervisor of this thesis.
+
+    The compiler is based on the Small Device C Compiler (SDCC) modified to provide support for the processor so it offers a subset of features of SDCC in version 3.0.
+
+    There is support for adding further optimization methods provided by SDCC, additionally to its own optimizations those are ran during the compilation process on the intermediate code.
+
+    Data types supported are integers large from 1 to 4 bytes, there is also no problem with converting them.
+
+    Usage of arrays (even multidimensional) and pointers is implemented, including their usage as function parameters.
+
+    As PicoBlaze-6 was released only a few months after Jakub started writing the thesis for the previous one, PicoBlaze-3, he didn't focus on the new features at all and wrote the program only for the old one. This is the reason why function pointers aren't implemented and what I will be focusing on in this thesis.
+
+    The main reason to rewrite the compiler from scratch is to avoid carrying all the legacy instructions and features and to focus on the cleanest possible implementation of the current revision of the processor.
+
+    Jakub also suggests allocating the registers by coloring them and using the information for better results when memory access frequency is taken in question.
+
+    This means I wrote the whole program again while using just a few parts from the original code.
+
+\chapter{Compiler Choice}\label{compiler}
+
+As starting a new compiler from scratch would not be possible in time limited by time that is available for the bachelor's thesis, I had to choose an existing one and modify it.
+
+This basically rules out all of the proprietary compilers and the selection limited to those from the world of free and open source software. In the end, I was left with the following three.
+
+%% TODO celou tu vec s popisem frontendu bude potreba vzit vic do hloubky
+
+    \section{GNU Compiler Collection}
+
+    The GNU Compiler Collection, more known as \texttt{GCC}, was started as a simple C compiler in year 1985 by Richard Stallman. It is now one of the most widely used compiler suites not only in open source systems.
+
+    Due to its huge history and background, its code base is stable and mature but it also is very hard to read due to historical reasons and the fact basically everything is wrapped in several layers of macros.
+
+    The documentation of the inner %% TODO funkcnost?
+    is not very well arranged and it is hard to find it. Because of its heritage, the structure does not seem very transparent.
+
+    \section{Low Level Virtual Machine}
+
+    LLVM, or, as this project is targeting C compiling, its front-end Clang, is a modern project with a great gain of popularity as it implements the latest features and standards very fast and provides some interesting tools, like static analyzer
+
+    Compared to GCC, it is a really young project, started in 2005, and more flexible as it is not governed by Free Software Foundation and the GNU Project.
+
+    It is also interesting to mention its development is sponsored by big companies like Google or Apple.
+
+    LLVM provides a very well documented intermediate representation of the compiled source code. Its documentation is a publicly visible document on their wiki page with every detail described.
+
+    \section{Small Device C Compiler}
+
+    SDCC is a simple (compared to the previous two) compiler aimed to be easily retargetable and provide a quality background for creating compilers for 8bit processors.
+
+    It's not a very large project (especially when compared to GCC and LLVM) and it uses parts (for example, the preprocessor) of GCC.
+
+    It optimizes the compiled source code with focusing on issues appearing on small devices.
+
+    The intermediate code is not very well documented (there is a list of all the Icodes on the project's wiki) but is simple enough to be understandable.
+
+    Unlike the previous two compilers, it provides opcodes for operations such as port access %% TODO overit, nejsem si ted uplne jisty a nemam to u sebe
+    
+
+\chapter{New Port Creation}\label{port}
+
+SDCC is basically a framework for compiler creation, providing handy tools that make compiling for the programmer's platform easier.
+
+Its architecture is divided into \emph{ports}, units containing code related only to one target platform. These can be divided even further to provide more flexibility regarding different types of processors.
+
+    \section{Adding a New Port}
+
+    As this process is not documented anywhere in the SDCC documentation and doing it properly would require deep and good understanding of the GNU autotools toolchain, the following procedure was used to add the new port to the SDCC source:
+
+    %%TODO: strasne rad bych z toho udelal seznam, ale nevim jak a neni tu internet
+
+    Create a port source directory in \texttt{src/}, in this case, I was calling it \texttt{pblaze}.
+
+    Add the basic source files in the port directory, for example \texttt{main.c} and \texttt{main.h}. \texttt{main.c} has to contain an instance of \texttt{PORT} structure containing information about the port's specifications and pointers to functions that will be called during the compilation.
+
+    Insert a new (unique) port ID into \texttt{src/port.h}, like this for example:
+
+    %TODO TODO TODO texttt nebere # ani \#
+
+    %\texttt{TODOKRIZEKdefine TARGET_ID_PBLAZE    16}
+
+    and create an \texttt{extern} reference to the \texttt{PORT} instance from %\texttt{src/pblaze/main.c}, for example:
+
+    %\texttt{TODOKRIZEKif !OPT_DISABLE_PBLAZE}
+    %\texttt{extern PORT pblaze_port;}
+    %\texttt{TODOKRIZEKendif}
+
+    In \texttt{src/SDCCmain.c}, insert a reference to the structure defined in \texttt{src/pblaze/main.c}.
+
+    
+
+    \section{Tools Used}
+
+        \subsection{pBlazASM}
+
+        Open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the simulator \ref{pblazsim}.
+
+        However, the program itself is bug infested and crashes quite often. I had to modify its source to workaround the biggest problems (such as calling \texttt{free()} on a pointer that was not returned by \texttt{malloc()}).
+
+        \subsection{pBlazSIM}\label{pblazsim}
+
+        As the debugging capabilities of the processor are limited and running the programs on real hardware would be too complicated, possibility of usage a simulator of the target processor is more than welcome.
+
+        One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is written in C++ and Qt, so its usage is not limited only to the Windows platform which is the only one Mediatronix distributes the binary form to.
+
+        At first, I was running the simulator in \emph{Wine} (Windows libraries implementation for other platforms) but strangely enough, the only code that it could simulate, was the example that was packed in the archive with the binary.
+
+        Then, I downloaded the source code from the repository on Google Code and compiled the program myself (this wasn't flawless, too, as the provided files aren't complete). Finally, the compiled version works all right and simulates the output properly.
+
+        
+
+\chapter{Port Features}\label{features}
+
+\chapter{Conclusion}\label{conclusion}
+
+
+\cite{TBD}
+%=========================================================================

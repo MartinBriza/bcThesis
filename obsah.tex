@@ -110,8 +110,31 @@ The most up to date version is now 6 with its latest release 5 made public on 30
     More on this topic is discussed in paper by Zbyněk Křivka and Rudolf Schönecker %% TODO link bibliografie nebo tak nejak
 
 
+    \section{PBCC by Bohumil Nováček}\label{not_quite_c}
+    
+    %% https://dip.felk.cvut.cz/browse/details.php?f=F3&d=K13136&y=2008&a=xnovaceb&t=bach
+    %% MORE TODO
+    This bachelor tesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in year 2008 when only PCComp\ref{pccomp} existed.
+    
+    The compiler allows the user only to compile a 
+    small subset of the actual ISO/IEC 9899:1999 standard,
+    to name a few limitations, it's not possible to use 
+    \texttt{struct}, \texttt{union}, \texttt{enum} nor \texttt{typedef} keywords,
+    effectively limiting the user to use only the basic types which are in this case \texttt{void}, \texttt{char} and \texttt{int}.
+    It doesn't support expression conditions, strings and multidimensional arrays either.
+    
+    These limitations are caused by the fact Bohumil decided to write the compiler 
+    from scratch without usage of any framework or front-end and the fact the time provided
+    for writing a bachelor thesis is far from enough to finish work on a complete compiler.
+    
+    However, despite its simplicity, some optimizations are implemented, 
+    such as constants being replaced by values directly or 
+    doing the same for results of constant expressions.
+    
+    Also, the source code is not to be found anywhere on the Internet, only the text part of the thesis.
+    
 
-    \section{PBCC}\label{prev_pbcc}
+    \section{PBCC by Jakub Horník}\label{prev_pbcc}
 
     %% FIXME ach jo, tohle je fakt hrozna cast, mel bych to prepsat, ty vety nedavaji smysl a nenavazuji
 

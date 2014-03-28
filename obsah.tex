@@ -108,44 +108,46 @@ The most up to date version is now 6 with its latest release 5 made public on 30
     Picoblaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge, %% TODO link
     yet there are no files to download or source code in the repository and the only relevant activity visible is a question where to actually download the compiler.
 
-    I managed to find a Windows binary in version 1.8.4 in a web archive and a manual describing the compiler's features, both from year 2005 or 2006.
+    I managed to find a Windows binary in version 1.8.4 in a web archive and a user manual describing the compiler's features, both created in year 2005 or 2006.
 
     It supports compiling programs for PicoBlaze, PicoBlaze-2 and PicoBlaze-3.
 
-    However, the limitations of the compiler are vast. It generates stack-based code for processor that lacks any stack and the implementation of the C standard is not complete. Type conversions are missing. It is also impossible to use variable modifying keywords like \texttt{volatile}. But it basically doesn't matter as the compiler doesn't do any optimization %% TODO: optimiZation nebo optimiSation?
-    of the resulting code except unused variable detection.
+    However, the limitations of the compiler are vast. It generates stack-based code. This is unfortunate because PicoBlaze lacks any stack. 
 
-    To list issues compared in the %%TODO ref
-    Only byte and word (1 and 2 bytes) types are supported and their conversions aren't always possible. Only one-dimensional arrays and no pointer arithmetic is included in the compiler. Global variables can be defined only on the global level.
+    The implementation of the C standard is not complete. Type conversions are missing. It is also impossible to use variable modifying keywords like \texttt{volatile}. Given that the compiler does not support any kind of optimization of the resulting code except dead code detection, it's not a big issue though, as the programmer can prevent the compiler from discarding the variables by simply using them.
 
-    The compiled assembler is often buggy or even nonfunctional and probability of this is increasing with complexity of code and expressions used.
+    To list some issues when the flaws of the previous PBCC\ref{prev_pbcc} are taken in question:
+
+    Only byte and word (1 and 2 bytes) types are supported and their conversions aren't always possible. Only one-dimensional arrays and no pointer arithmetic is implemented by the compiler.
+    Global variables can be defined only on the global level. % TODO wut
+
+    The compiled assembler is often buggy or even nonfunctional and probability of getting broken code is increasing with complexity of the input and especially the arithmetic expressions used.
 
     More on this topic is discussed in paper by Zbyněk Křivka and Rudolf Schönecker %% TODO link bibliografie nebo tak nejak
 
 
     \section{PBCC by Bohumil Nováček}\label{not_quite_c}
-    
+
     %% https://dip.felk.cvut.cz/browse/details.php?f=F3&d=K13136&y=2008&a=xnovaceb&t=bach
     %% MORE TODO
-    This bachelor tesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in year 2008 when only PCComp\ref{pccomp} existed.
-    
-    The compiler allows the user only to compile a 
+    This bachelor thesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in year 2008 when only PCComp\ref{pccomp} existed.
+
+    The compiler only allows the user to compile a
     small subset of the actual ISO/IEC 9899:1999 standard,
-    to name a few limitations, it's not possible to use 
+    to name a few limitations, it's not possible to use
     \texttt{struct}, \texttt{union}, \texttt{enum} nor \texttt{typedef} keywords,
-    effectively limiting the user to use only the basic types which are in this case \texttt{void}, \texttt{char} and \texttt{int}.
+    effectively limiting the user to use only the basic types which are in this case \texttt{void}, \texttt{char} and \texttt{int} (again 1 and 2 bytes).
+
     It doesn't support expression conditions, strings and multidimensional arrays either.
-    
-    These limitations are caused by the fact Bohumil decided to write the compiler 
-    from scratch without usage of any framework or front-end and the fact the time provided
-    for writing a bachelor thesis is far from enough to finish work on a complete compiler.
-    
-    However, despite its simplicity, some optimizations are implemented, 
-    such as constants being replaced by values directly or 
-    doing the same for results of constant expressions.
-    
-    Also, the source code is not to be found anywhere on the Internet, only the text part of the thesis.
-    
+
+    These limitations are caused by the fact Bohumil decided to write the compiler
+    from scratch without usage of any framework or front-end and the fact the time needed to finish a complete C compiler is far beyond the time-frame of a bachelor thesis.
+
+    However, despite its simplicity, some optimization is implemented, 
+    such as constants and the results of constant expressions being replaced by values directly.
+
+    Also, the source code is not to be found anywhere on the Internet, only the text part of the thesis was made public.
+
 
     \section{PBCC by Jakub Horník}\label{prev_pbcc}
 

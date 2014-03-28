@@ -77,7 +77,7 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
         \subsection{\texttt{ADDCY} and \texttt{SUBCY} Instruction Changes}
 
-        
+        The previous version of these instructions modified the zero flag only according to their own result. Now they add the previous zero to the current one.
 
         \subsection{New \texttt{REGBANK} and \texttt{STAR} Instructions}
 
@@ -87,13 +87,17 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
         \subsection{New \texttt{COMPARECY} and \texttt{TESTCY} Instructions}
 
-        Instructions added to make comparing multi-byte types easier. They store the flags and propagate it according to the progress through the single bytes.
+        Instructions added to make comparing multi-byte types easier. They store the flags (carry and zero) and propagate them according to the progress through the single bytes.
 
-        \subsection{New \texttt{LOAD\&RETURN} and \texttt{STRING} Instructions}
+        \subsection{New \texttt{LOAD\&RETURN} Instruction and \texttt{STRING} Directive}
 
-        
+        The user (or compiler) can now specify a byte string location in the memory using the \texttt{STRING} directive in the assembly.
+
+        Then, using the \texttt{LOAD\&RETURN} instruction, it's possible to load a constant value into a specified register and unconditionally return from a subroutine, making these very useful in conjunction to generate text strings to be presented to the user.
 
         \subsection{New \texttt{OUTPUTK} Instruction}
+
+        This instruction allows the program to output a constant instead of loading it into a register and outputting it using the regular \texttt{OUTPUT}.
 
 
 

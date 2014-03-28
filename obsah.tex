@@ -67,7 +67,9 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
         \subsection{RAM Changes}
 
-        The amount of addressable RAM from the program was increased to up to 256 bytes from 64, yet it depends on the target chip the user will be using. This was achieved by modifying the opcodes of instructions of the processor.
+        The amount of RAM addressable by the program was increased to up to 256 bytes from 64, yet it depends on the target device the processor will be implemented on. 
+
+        This was achieved by modifying the opcodes of instructions of the processor, not the internals.
 
         \subsection{Call stack}
 
@@ -79,9 +81,9 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
         \subsection{New \texttt{REGBANK} and \texttt{STAR} Instructions}
 
-        The new version of the processor now provides two sets of 16 general purpose registers that are switchable using the \texttt{REGBANK} instruction as only one of the sets can be accessed at a time.
-        To store values in the inactive bank, \texttt{STAR} instruction is provided - it stores a value from the active bank register in an other register that is in the inactive one.
+        The new version of the processor now provides two sets of 16 general purpose registers that are switchable using the \texttt{REGBANK} instruction - this means only one of the sets can be accessed at a time.
 
+        To store values in the inactive bank, the \texttt{STAR} instruction is provided - it's used to store a value from the active bank register in another register that is in the inactive bank.
 
         \subsection{New \texttt{COMPARECY} and \texttt{TESTCY} Instructions}
 

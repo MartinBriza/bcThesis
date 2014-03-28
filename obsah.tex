@@ -57,8 +57,9 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
         Indirect jumps and calls, provided the address of the function or label, are possible in the new version.
 
-        This improves compatibility with C programming style %% TODO nevim jak to rict :(
-        as it allows function pointers to be compiled in the code.
+        This improves compatibility with sophisticated C programs greatly as it allows the implementation of function pointers and their calling.
+
+        It also means there had to a new addressing mode introduced - the whole program memory can't be covered with only an 8-bit value, so the code's section is stored in the lower four bytes of the first register and the rest of the address in the second one.
 
         \subsection{Program Memory Changes}
 

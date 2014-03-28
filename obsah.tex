@@ -28,19 +28,25 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
     \section{Main Features}
 
-    %% TODO myslim ze by nebylo uplne od veci predelat tohle na tabulku
+    \begin{center}
+    \begin{tabular}{ @{\extracolsep{\fill} } r | l }
+        Program memory & Up to 4096 instructions \\
 
-    Programs can consist of up to 4096 instructions.
+        Scratchpad RAM & Up to 256 bytes \\
 
-    The processor can be included directly in the FPGA design without any other components needed.
+        2 Register banks & Containing 16 8-bit registers each\\
 
-    Offers up to 256 bytes of scratchpad RAM.
+        Output & 256 8-bit ports \\
 
-    Two banks of 16 8-bit registers.
+        8-bit ALU & Supports shifting, adding and subtracting \\
+                  & Provides AND, OR and XOR operations \\
+                  & Compares and tests \\
+                  & Implements carry and zero flags \\
 
-    8-bit Arithmetic-Logic Unit supporting shifting, adding and subtracting, XOR, OR, AND, comparing and testing.using the implemented carry and zero flag.
-
-    256 8-bit output ports.
+        FPGA design & Can be included directly in the VHDL code \\
+                    & No other equipment or code needed \\
+    \end{tabular}
+    \end{center}
 
     \section{PicoBlaze-3 and PicoBlaze-6 Difference}
 

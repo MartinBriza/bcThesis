@@ -238,11 +238,15 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
     %\texttt{TODOKRIZEKdefine TARGET_ID_PBLAZE    16}
 
-    and create an \texttt{extern} reference to the \texttt{PORT} instance from %\texttt{src/pblaze/main.c}, for example:
+    and create an \texttt{extern} reference to the \texttt{PORT} instance from \texttt{src/pblaze/main.c}, for example:
 
-    %\texttt{TODOKRIZEKif !OPT_DISABLE_PBLAZE}
-    %\texttt{extern PORT pblaze_port;}
-    %\texttt{TODOKRIZEKendif}
+    \mint{c}|int foo = 0xB47;|
+
+    \texttt{\#if !OPT\_DISABLE\_PBLAZE}
+
+    \texttt{extern PORT pblaze\_port;}
+
+    \texttt{\#endif}
 
     In \texttt{src/SDCCmain.c}, insert a reference to the structure defined in \texttt{src/pblaze/main.c}.
 

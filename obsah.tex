@@ -48,6 +48,10 @@ The most up to date version is now 6 with its latest release 5 made public on 30
     \end{tabular}
     \end{center}
 
+    \section{Practical usage}
+
+    A sequential processor, in comparison to parallel hardware design, is much more feasible for implementing state machines and simple cycles.
+
     \section{The difference between PicoBlaze-3 and PicoBlaze-6}
 
     There were major changes done to the PicoBlaze in the upgrade to the new version (that is still backwards-compatible). 
@@ -266,6 +270,14 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
         Then, I downloaded the source code from the repository on Google Code and compiled the program myself (this wasn't flawless, too, as the provided files aren't complete). Finally, the compiled version works all right and simulates the output properly.
 
+        \subsection{PBSim}\label{pbsim}
+
+        A project that is being developed on the University, started as a Master's project in year 2012.
+
+        Bound to \emph{SDCC}.
+
+        Tightly related to Eclipse, it's possible to use it as a part of the interface.
+
 
 \chapter{Implementation Design}\label{design}
 
@@ -297,6 +309,8 @@ The whole wrapper library is included in the \texttt{wrap.h} and \texttt{wrap.cc
 
 To provide better readable code and easier debugging, there are some classes provided.
 
+Everything covered here can be found in the \texttt{util.h} and \texttt{util.cc} files.
+
     \subsection{Emitter}\label{emitter}
 
     Working in a similar fashion to the streams in the \emph{C++ STL} library, this class implements the final assembly output.
@@ -307,9 +321,13 @@ To provide better readable code and easier debugging, there are some classes pro
 
 \section{Instruction generator}
 
+\texttt{gen.h} and \texttt{gen.cc}
+
 \section{Variable storage}
 
 All the included sections are named after the classes in the source code to provide a comprehensible description of their purpose.
+
+\texttt{ralloc.h} and \texttt{ralloc.cc}
 
     \subsection{Allocator}
 

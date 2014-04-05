@@ -266,6 +266,31 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
         Then, I downloaded the source code from the repository on Google Code and compiled the program myself (this wasn't flawless, too, as the provided files aren't complete). Finally, the compiled version works all right and simulates the output properly.
 
+
+\chapter{Design}\label{design}
+
+\section{Base Layer}
+
+Using pure C library calls and macros in a C++ project would be wasting potential of the language, that's why the project is building upon a wrapper library for the \emph{SDCC} internals instead of them directly.
+
+The whole wrapper library is included in the \texttt{wrap.h} and \texttt{wrap.cc} files.
+
+    \subsection{Approach}
+
+    Every needed \emph{SDCC} structure is wrapped in its own class adding new methods.
+
+    The C++ classes are inheriting the structures themselves (to provide ability to up-cast directly).
+
+    No other member variables are added, the memory footprint is the same. Actually, the pointers between the classes and their parent structures can be converted safely in both ways. This is not encouraged though as the language itself doesn't support this operation implicitly.
+
+    \subsections{Solution}
+
+    Most of the code is generated using regular expressions, then modified by hand to provide the required functionality.
+
+    The methods added to the classes are usually just wrapping the functions and macros from \emph{SDCC}.
+
+    There were some, unfortunately, that required being copied over to the code due to higher type safety of C++ when compared to C. This is the case of \texttt{bool ICode::skipNoOp()} method for example.
+
 \chapter{Port Features}\label{features}
 
 \chapter{Conclusion}\label{conclusion}

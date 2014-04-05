@@ -267,7 +267,9 @@ Its architecture is divided into \emph{ports}, units containing code related onl
         Then, I downloaded the source code from the repository on Google Code and compiled the program myself (this wasn't flawless, too, as the provided files aren't complete). Finally, the compiled version works all right and simulates the output properly.
 
 
-\chapter{Design}\label{design}
+\chapter{Implementation Design}\label{design}
+
+In this chapter, the technical details of the project are discussed.
 
 \section{Base Layer}
 
@@ -295,13 +297,33 @@ The whole wrapper library is included in the \texttt{wrap.h} and \texttt{wrap.cc
 
 To provide better readable code and easier debugging, there are some classes provided.
 
-    \subsection{Emitter}
+    \subsection{Emitter}\label{emitter}
 
     Working in a similar fashion to the streams in the \emph{C++ STL} library, this class implements the final assembly output.
 
     The single global instance of this class is initialized on start-up, configuring the output file and output format to hide these details from the generating code itself.
 
     Streaming (or left shift) operators are overloaded to make the instruction emitting stand out from the code.
+
+\section{Instruction generator}
+
+\section{Variable storage}
+
+All the included sections are named after the classes in the source code to provide a comprehensible description of their purpose.
+
+    \subsection{Allocator}
+
+    Singleton class used as an entrance to the generator itself.
+
+    \subsection{Byte Subclasses - MemoryCell and Register}
+
+    \subsection{Bank}
+
+    Two instances of this class are present in the compiler, for each register bank contained in the processor.
+
+    It collects all 16 registers and manages their allocation for variables and handles their clearing or moving to memory.
+
+    \subsection{Memory}
 
 \chapter{Port Features}\label{features}
 

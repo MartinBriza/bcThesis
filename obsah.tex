@@ -226,21 +226,17 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
     As this process is not documented anywhere in the SDCC documentation and doing it properly would require deep and good understanding of the GNU autotools toolchain, the following procedure was used to add the new port to the SDCC source:
 
-    %%TODO: strasne rad bych z toho udelal seznam, ale nevim jak a neni tu internet
+    \begin{enumerate}
 
-    Create a port source directory in \texttt{src/}, in this case, I was calling it \texttt{pblaze}.
+    \item Create a port source directory in \texttt{src/}, in this case, I was calling it \texttt{pblaze}.
 
-    Add the basic source files in the port directory, for example \texttt{main.c} and \texttt{main.h}. \texttt{main.c} has to contain an instance of \texttt{PORT} structure containing information about the port's specifications and pointers to functions that will be called during the compilation.
+    \item Add the basic source files in the port directory, for example \texttt{main.c} and \texttt{main.h}. \texttt{main.c} has to contain an instance of \texttt{PORT} structure containing information about the port's specifications and pointers to functions that will be called during the compilation.
 
-    Insert a new (unique) port ID into \texttt{src/port.h}, like this for example:
+    \item Insert a new (unique) port ID into \texttt{src/port.h}, like this for example:
 
-    %TODO TODO TODO texttt nebere # ani \#
+    \texttt{\#define TARGET\_ID\_PBLAZE    16}
 
-    %\texttt{TODOKRIZEKdefine TARGET_ID_PBLAZE    16}
-
-    and create an \texttt{extern} reference to the \texttt{PORT} instance from \texttt{src/pblaze/main.c}, for example:
-
-    \mint{c}|int foo = 0xB47;|
+    \item And create an \texttt{extern} reference to the \texttt{PORT} instance from \texttt{src/pblaze/main.c}, for example:
 
     \texttt{\#if !OPT\_DISABLE\_PBLAZE}
 
@@ -248,9 +244,9 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
     \texttt{\#endif}
 
-    In \texttt{src/SDCCmain.c}, insert a reference to the structure defined in \texttt{src/pblaze/main.c}.
+    \item In \texttt{src/SDCCmain.c}, insert a reference to the structure defined in \texttt{src/pblaze/main.c}.
 
-    
+    \end{enumerate}
 
     \section{Tools Used}
 
@@ -269,8 +265,6 @@ Its architecture is divided into \emph{ports}, units containing code related onl
         At first, I was running the simulator in \emph{Wine} (Windows libraries implementation for other platforms) but strangely enough, the only code that it could simulate, was the example that was packed in the archive with the binary.
 
         Then, I downloaded the source code from the repository on Google Code and compiled the program myself (this wasn't flawless, too, as the provided files aren't complete). Finally, the compiled version works all right and simulates the output properly.
-
-        
 
 \chapter{Port Features}\label{features}
 

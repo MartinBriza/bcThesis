@@ -283,13 +283,25 @@ The whole wrapper library is included in the \texttt{wrap.h} and \texttt{wrap.cc
 
     No other member variables are added, the memory footprint is the same. Actually, the pointers between the classes and their parent structures can be converted safely in both ways. This is not encouraged though as the language itself doesn't support this operation implicitly.
 
-    \subsections{Solution}
+    \subsection{Solution}
 
     Most of the code is generated using regular expressions, then modified by hand to provide the required functionality.
 
     The methods added to the classes are usually just wrapping the functions and macros from \emph{SDCC}.
 
     There were some, unfortunately, that required being copied over to the code due to higher type safety of C++ when compared to C. This is the case of \texttt{bool ICode::skipNoOp()} method for example.
+
+\section{Utility classes}
+
+To provide better readable code and easier debugging, there are some classes provided.
+
+    \subsection{Emitter}
+
+    Working in a similar fashion to the streams in the \emph{C++ STL} library, this class implements the final assembly output.
+
+    The single global instance of this class is initialized on start-up, configuring the output file and output format to hide these details from the generating code itself.
+
+    Streaming (or left shift) operators are overloaded to make the instruction emitting stand out from the code.
 
 \chapter{Port Features}\label{features}
 

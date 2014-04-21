@@ -105,6 +105,70 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
 
 
+\chapter{Programming language compiler}
+
+Most of the modern computer processors are programmed using a fairly complicated binary instruction set. To make writing more complex and powerful applications, we are now using programming languages that are translated (\emph{compiled}) into the low level binary form easily understood by the processor.
+
+    \section{Compiler structure}
+
+    A typical programming language compiler consists of two (or three) parts:
+
+        \subsection{Front-end}
+
+            Does syntactic and semantic analysis of the input code according to the lexical and grammatical rules of the given language.
+
+            It produces the intermediate code as its output, to be further processed.
+
+        \subsection{Intermediate Code Optimizer (optional)}
+
+            Being input the intermediate code, it makes it smaller and/or more efficient, regardless of the target architecture.
+
+        \subsection{Back\-end}
+
+            The input in this case is the intermediate language, too. The back-end then takes it and transofrms it to the target assembly or directly the binary form for the target processor architecture.
+
+            Architecture-dependent optimizations can take place in this phase.
+
+\chapter{Compiler Choice}\label{compiler}
+
+As starting a new compiler from scratch would not be possible in time limited by time that is available for the bachelor's thesis, I had to choose an existing one and modify it.
+
+This basically rules out all of the proprietary compilers and the selection limited to those from the world of free and open source software. In the end, I was left with the following three.
+
+%% TODO celou tu vec s popisem frontendu bude potreba vzit vic do hloubky
+
+    \section{GNU Compiler Collection}
+
+    The GNU Compiler Collection, more known as \texttt{GCC}, was started as a simple C compiler in year 1985 by Richard Stallman. It is now one of the most widely used compiler suites not only in open source systems.
+
+    Due to its huge history and background, its code base is stable and mature but it also is very hard to read due to historical reasons and the fact basically everything is wrapped in several layers of macros.
+
+    The documentation of the inner %% TODO funkcnost?
+    is not very well arranged and it is hard to find it. Because of its heritage, the structure does not seem very transparent.
+
+    \section{Low Level Virtual Machine}
+
+    LLVM, or, as this project is targeting C compiling, its front-end Clang, is a modern project with a great gain of popularity as it implements the latest features and standards very fast and provides some interesting tools, like static analyzer
+
+    Compared to GCC, it is a really young project, started in 2005, and more flexible as it is not governed by Free Software Foundation and the GNU Project.
+
+    It is also interesting to mention its development is sponsored by big companies like Google or Apple.
+
+    LLVM provides a very well documented intermediate representation of the compiled source code. Its documentation is a publicly visible document on their wiki page with every detail described.
+
+    \section{Small Device C Compiler}
+
+    SDCC is a simple (compared to the previous two) compiler aimed to be easily retargetable and provide a quality background for creating compilers for 8bit processors.
+
+    It's not a very large project (especially when compared to GCC and LLVM) and it uses parts (for example, the preprocessor) of GCC.
+
+    It optimizes the compiled source code with focusing on issues appearing on small devices.
+
+    The intermediate code is not very well documented (there is a list of all the Icodes on the project's wiki) but is simple enough to be understandable.
+
+    Unlike the previous two compilers, it provides opcodes for operations such as port access %% TODO overit, nejsem si ted uplne jisty a nemam to u sebe
+    
+
 \chapter{Existing Solutions}\label{existing}
 
     \section{PCComp}\label{pccomp}
@@ -180,45 +244,6 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
     This means I wrote the whole program again while using just a few parts from the original code.
 
-\chapter{Compiler Choice}\label{compiler}
-
-As starting a new compiler from scratch would not be possible in time limited by time that is available for the bachelor's thesis, I had to choose an existing one and modify it.
-
-This basically rules out all of the proprietary compilers and the selection limited to those from the world of free and open source software. In the end, I was left with the following three.
-
-%% TODO celou tu vec s popisem frontendu bude potreba vzit vic do hloubky
-
-    \section{GNU Compiler Collection}
-
-    The GNU Compiler Collection, more known as \texttt{GCC}, was started as a simple C compiler in year 1985 by Richard Stallman. It is now one of the most widely used compiler suites not only in open source systems.
-
-    Due to its huge history and background, its code base is stable and mature but it also is very hard to read due to historical reasons and the fact basically everything is wrapped in several layers of macros.
-
-    The documentation of the inner %% TODO funkcnost?
-    is not very well arranged and it is hard to find it. Because of its heritage, the structure does not seem very transparent.
-
-    \section{Low Level Virtual Machine}
-
-    LLVM, or, as this project is targeting C compiling, its front-end Clang, is a modern project with a great gain of popularity as it implements the latest features and standards very fast and provides some interesting tools, like static analyzer
-
-    Compared to GCC, it is a really young project, started in 2005, and more flexible as it is not governed by Free Software Foundation and the GNU Project.
-
-    It is also interesting to mention its development is sponsored by big companies like Google or Apple.
-
-    LLVM provides a very well documented intermediate representation of the compiled source code. Its documentation is a publicly visible document on their wiki page with every detail described.
-
-    \section{Small Device C Compiler}
-
-    SDCC is a simple (compared to the previous two) compiler aimed to be easily retargetable and provide a quality background for creating compilers for 8bit processors.
-
-    It's not a very large project (especially when compared to GCC and LLVM) and it uses parts (for example, the preprocessor) of GCC.
-
-    It optimizes the compiled source code with focusing on issues appearing on small devices.
-
-    The intermediate code is not very well documented (there is a list of all the Icodes on the project's wiki) but is simple enough to be understandable.
-
-    Unlike the previous two compilers, it provides opcodes for operations such as port access %% TODO overit, nejsem si ted uplne jisty a nemam to u sebe
-    
 
 \chapter{New Port Creation}\label{port}
 

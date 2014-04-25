@@ -115,13 +115,27 @@ Most of the modern computer processors are programmed using a fairly complicated
 
         \subsection{Front-end}
 
-            Does syntactic and semantic analysis of the input code according to the lexical and grammatical rules of the given language.
+            Does lexical, syntactic and semantic analysis of the input code according to the rules of the given language.
 
             It produces the intermediate code as its output, to be further processed.
 
-        \subsection{Intermediate Code Optimizer (optional)}
+            \subsubsection{Lexical analysis}
 
-            Being input the intermediate code, it makes it smaller and/or more efficient, regardless of the target architecture.
+                As the first part of the front-end, the input string of characters is broken into tokens according to the grammatical rules which are set by the language standard.
+
+                In the case of the C language, they are in the form of regular expressions which means they are being matched by a state machine.
+
+            \subsubsection{Syntactic analysis}
+
+                
+            \subsubsection{Semantic analysis}
+            
+
+        \subsection{Intermediate Code}
+
+            \subsubsection{The Intermediate Code Optimizer}
+
+                Being input the intermediate code, it makes it smaller and/or more efficient, regardless of the target architecture.
 
         \subsection{Back\-end}
 
@@ -143,8 +157,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     Due to its huge history and background, its code base is stable and mature but it also is very hard to read due to historical reasons and the fact basically everything is wrapped in several layers of macros.
 
-    The documentation of the inner %% TODO funkcnost?
-    is not very well arranged and it is hard to find it. Because of its heritage, the structure does not seem very transparent.
+    The documentation of the inner functionality is not very well arranged and it is hard to find it. Because of its heritage, the structure does not seem very transparent.
 
     \section{Low Level Virtual Machine}
 
@@ -156,6 +169,10 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     LLVM provides a very well documented intermediate representation of the compiled source code. Its documentation is a publicly visible document on their wiki page with every detail described.
 
+        \subsection{Architecture}
+
+        LLVM is strictly separated into front and back ends, divided by the LLVM intermediate code that is heavily optimized and it's runnable directly in a virtual machine (hence the name Low Level \emph{Virtual Machine})
+
     \section{Small Device C Compiler}
 
     SDCC is a simple (compared to the previous two) compiler aimed to be easily retargetable and provide a quality background for creating compilers for 8bit processors.
@@ -166,8 +183,10 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     The intermediate code is not very well documented (there is a list of all the Icodes on the project's wiki) but is simple enough to be understandable.
 
-    Unlike the previous two compilers, it provides opcodes for operations such as port access %% TODO overit, nejsem si ted uplne jisty a nemam to u sebe
-    
+    %does it?
+%     Unlike the previous two compilers, it provides opcodes for operations such as port access %% TODO overit, nejsem si ted uplne jisty a nemam to u sebe
+
+    Its development is slow
 
 \chapter{Existing Solutions}\label{existing}
 
@@ -178,21 +197,27 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     I managed to find a Windows binary in version 1.8.4 in a web archive and a user manual describing the compiler's features, both created in year 2005 or 2006.
 
-    It supports compiling programs for PicoBlaze, PicoBlaze-2 and PicoBlaze-3.
-
     However, the limitations of the compiler are vast. It generates stack-based code. This is unfortunate because PicoBlaze lacks any stack. 
 
-    The implementation of the C standard is not complete. Type conversions are missing. It is also impossible to use variable modifying keywords like \texttt{volatile}. Given that the compiler does not support any kind of optimization of the resulting code except dead code detection, it's not a big issue though, as the programmer can prevent the compiler from discarding the variables by simply using them.
+        \subsection{Features}
 
-    To list some issues when the flaws of the previous PBCC\ref{prev_pbcc} are taken in question:
+        The compiler is not strictly following the C standard and implements only its small subset.
 
-    Only byte and word (1 and 2 bytes) types are supported and their conversions aren't always possible. Only one-dimensional arrays and no pointer arithmetic is implemented by the compiler.
-    Global variables can be defined only on the global level. % TODO wut
+        PicoBlaze, PicoBlaze-2 and PicoBlaze-3 support.
 
-    The compiled assembler is often buggy or even nonfunctional and probability of getting broken code is increasing with complexity of the input and especially the arithmetic expressions used.
+        Byte and word (1 and 2 bytes) types only are supported.
 
-    More on this topic is discussed in paper by Zbyněk Křivka and Rudolf Schönecker %% TODO link bibliografie nebo tak nejak
+        One-dimensional arrays without any pointer arithmetic are implemented by the compiler.
 
+        \subsection{Limitations}
+
+        Type conversions are missing, as are variable modifiers(e.g. \texttt{volatile}). 
+
+        The compiler doesn't support any kind of resulting code optimization, except dead branch detection.
+
+        To list some issues when the flaws of the previous PBCC\ref{prev_pbcc} are taken in question:
+
+        The compiled assembly is often buggy or even nonfunctional and the probabilty of getting broken code is increasing with the complexity of the input source code and the arithmetic expressions in particular.
 
     \section{PBCC by Bohumil Nováček}\label{not_quite_c}
 
@@ -200,11 +225,26 @@ This basically rules out all of the proprietary compilers and the selection limi
     %% MORE TODO
     This bachelor thesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in year 2008 when only PCComp\ref{pccomp} existed.
 
-    The compiler only allows the user to compile a
-    small subset of the actual ISO/IEC 9899:1999 standard,
+    Bohumil has written the program as a part of his bachelor thesis, resulting in great %TODO
+
+        \subsection{Features}
+
+        The compiler only allows the user to compile a small subset of the actual ISO/IEC 9899:1999 standard.
+
+        Processor support is limited to PicoBlaze-3.
+
+        The types supported are \texttt{void}, \texttt{char} and \texttt{int}.
+
+        There is support for one-dimensional arrays only.
+
+        \subsection{Limitations}
+
+        There is no support for any user-defined type, be it only a typedef or a complex type (\texttt{struct}, \texttt{union}, \texttt{enum}).
+
+    ,
     to name a few limitations, it's not possible to use
-    \texttt{struct}, \texttt{union}, \texttt{enum} nor \texttt{typedef} keywords,
-    effectively limiting the user to use only the basic types which are in this case \texttt{void}, \texttt{char} and \texttt{int} (again 1 and 2 bytes).
+    nor \texttt{typedef} keywords,
+    effectively limiting the user to use only the basic types which are in this case  (again 1 and 2 bytes).
 
     It doesn't support expression conditions, strings and multidimensional arrays either.
 
@@ -279,11 +319,11 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
     \section{Tools Used}
 
-        \subsection{pBlazASM}
+        \subsection{pBlazASM}\label{pblazasm}
 
-        Open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the simulator \ref{pblazsim}.
+        PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the simulator \ref{pblazsim}.
 
-        However, the program itself is bug infested and crashes quite often. I had to modify its source to workaround the biggest problems (such as calling \texttt{free()} on a pointer that was not returned by \texttt{malloc()}).
+        However, the program itself is bug infested and crashes quite often. There were some trivial bugs that were possible to be fixed quickly, such as calling \texttt{free()} on a pointer that was not returned by \texttt{malloc()}).
 
         \subsection{pBlazSIM}\label{pblazsim}
 
@@ -291,9 +331,16 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
         One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is written in C++ and Qt, so its usage is not limited only to the Windows platform which is the only one Mediatronix distributes the binary form to.
 
-        At first, I was running the simulator in \emph{Wine} (Windows libraries implementation for other platforms) but strangely enough, the only code that it could simulate, was the example that was packed in the archive with the binary.
+            \subsubsection{Running under Linux}
 
-        Then, I downloaded the source code from the repository on Google Code and compiled the program myself (this wasn't flawless, too, as the provided files aren't complete). Finally, the compiled version works all right and simulates the output properly.
+            First attempts to run the simulator in \emph{Wine}\footnote{WINE is not an Emulator - an open source Windows API implementation} were quite unsuccessful as it was capable of simulation only the code which was included in the distributed binary package.
+
+            % TODO hadam ze tady to bude chtit citace
+            However, the application itself is hosted under the GPLv2 open source license in the Google Code repository. 
+
+            It's not possible to compile it directly from the source provided (at least at the time of writing of the thesis). The needed steps to finish the compilation successfully are fixing the \texttt{qmake} project file to include all needed source files and adding one missing icon for the GUI (for example by copying the existing ones in different colors).
+
+            The hand-compiled version is capable of running the assembly files generated by \ref{pblazasm} well, including all features of its graphical user interface.
 
         \subsection{PBSim}\label{pbsim}
 
@@ -301,7 +348,9 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
         Bound to \emph{SDCC}.
 
-        Tightly related to Eclipse, it's possible to use it as a part of the interface.
+        Tightly related to Eclipse, it's possible to use it as a part of the user interface.
+
+        
 
 
 \chapter{Implementation Design}\label{design}
@@ -344,9 +393,15 @@ Everything covered here can be found in the \texttt{util.h} and \texttt{util.cc}
 
     Streaming (or left shift) operators are overloaded to make the instruction emitting stand out from the code.
 
+    Many instructions have different forms for single- and multi- byte variables used as their operands. For this purpose, the class also provides an iterator variable, declared as \texttt{static public int i}.
+
 \section{Instruction generator}
 
 \texttt{gen.h} and \texttt{gen.cc}
+
+To avoid code duplication as much as possible, every instruction is generated using cycles wrapping the \texttt{Emitter}\ref{emitter} class.
+
+This helps code clarity in the \texttt{ICode} processing functions themselves, limiting it to pure logic of handling the needed information.
 
 \section{Variable storage}
 
@@ -362,13 +417,27 @@ All the included sections are named after the classes in the source code to prov
 
     \subsection{Bank}
 
-    Two instances of this class are present in the compiler, for each register bank contained in the processor.
+    Two instances of this class are present in the compiler, corresponds to each register bank contained in the processor.
 
     It collects all 16 registers and manages their allocation for variables and handles their clearing or moving to memory.
 
     \subsection{Memory}
 
+
 \chapter{Port Features}\label{features}
+
+\section{Code clarity}
+
+%extensibility sviti cervene, TODO
+The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2\ref{prev_pbcc}.
+
+Providing a C++ API also helps by providing more syntax sugar for anybody who wants to further modify the compiler. Using class methods instead of macros and functions also adds the possibility to use an IDE\footnote{Integrated Development Environment} with method suggestion.
+
+\section{KCPSM6 support}
+
+There is no other compiler designed to produce code for the newest revision of the PicoBlaze processor.
+
+The most modern ones support only KCPSM3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
 
 \chapter{Conclusion}\label{conclusion}
 

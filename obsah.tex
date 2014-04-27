@@ -20,11 +20,11 @@ Subject of this thesis project is constructing a C programming language compiler
 
 \chapter{The PicoBlaze Processor}\label{processor}
 
-Picoblaze is a 8-bit processor created by Xilinx for their Spartan and Virtex Field-programmable gate array (FPGA) series as an embeddable circuit to implement sequential programming in the otherwise parallel FPGA architecture. This of course means the processor is not meant to be physically manufactured, yet it would be possible.
+Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-programmable gate array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This of course means the processor is not meant to be physically manufactured, yet it would be possible.
 
-Historically, the name of the design was \texttt{KCPSM}, as for Ken Chapman's Programmable State Machine. This term is now still used in the FPGA design as the components are still caled \texttt{kcpsmX} where the \texttt{X} stands for the version of the processor.
+Historically, the name of the design was \texttt{KCPSM}, as for Ken Chapman's Programmable State Machine. This term is now still used in the FPGA design - the components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
 
-The most up to date version is now 6 with its latest release 5 made public on 30 September 2012. The previous version, 3, had its last 7th revision released in October 2003. %% TODO citace?
+The most up to date version is now 6 with its latest release 5 published on 30 September 2012. The previous version, 3, had its last 7th revision released in October 2003. %% TODO citace?
 
     \section{Main Features}
 
@@ -50,12 +50,13 @@ The most up to date version is now 6 with its latest release 5 made public on 30
 
     \section{Practical usage}
 
-    A sequential processor, in comparison to parallel hardware design, is much more feasible for implementing state machines and simple cycles.
+    A sequential processor, in comparison to parallel hardware design, is much more feasible for implementing state machines and computational cycles.
 
-    \section{The difference between PicoBlaze-3 and PicoBlaze-6}
+    \section{New features and properties of PicoBlaze-6}
 
-    There were major changes done to the PicoBlaze in the upgrade to the new version (that is still backwards-compatible). 
-    The most important ones are covered in this section, in descending order according to their impact on programming in C and the compiler itself.
+    Compared to the previous version, there were major changes in PicoBlaze's design after the upgrade to the sixth version, which is still backwards-compatible.
+
+    The most important ones are covered in this section in descending order according to their impact on programming in C and the compiler itself.
 
         \subsection{New \texttt{JUMP@} and \texttt{CALL@} Instructions}
 
@@ -64,6 +65,20 @@ The most up to date version is now 6 with its latest release 5 made public on 30
         This improves compatibility with sophisticated C programs greatly as it allows the implementation of function pointers and their calling.
 
         It also means there had to a new addressing mode introduced - the whole program memory can't be covered with only an 8-bit value, so the code's section is stored in the lower four bytes of the first register and the rest of the address in the second one.
+
+        \subsection{New \texttt{REGBANK} and \texttt{STAR} Instructions}
+
+        The new version of the processor now provides two sets of 16 general purpose registers that are switchable using the \texttt{REGBANK} instruction - this means only one of the sets can be accessed at a time.
+
+        To store values in the inactive bank, the \texttt{STAR} instruction is provided - it's used to store a value from the active bank register in another register that is in the inactive bank.
+
+        \subsection{\texttt{ADDCY} and \texttt{SUBCY} Instruction Changes}
+
+        The previous version of these instructions modified the zero flag only according to their own result. Now they add the previous zero to the current one.
+
+        \subsection{New \texttt{COMPARECY} and \texttt{TESTCY} Instructions}
+
+        Instructions added to make comparing multi-byte types easier. They store the flags (carry and zero) and propagate them according to the progress through the single bytes.
 
         \subsection{Program Memory Changes}
 
@@ -78,20 +93,6 @@ The most up to date version is now 6 with its latest release 5 made public on 30
         \subsection{Call stack}
 
         Only 30 levels of function call depth are now available compared to 31 of KCPSM3.
-
-        \subsection{\texttt{ADDCY} and \texttt{SUBCY} Instruction Changes}
-
-        The previous version of these instructions modified the zero flag only according to their own result. Now they add the previous zero to the current one.
-
-        \subsection{New \texttt{REGBANK} and \texttt{STAR} Instructions}
-
-        The new version of the processor now provides two sets of 16 general purpose registers that are switchable using the \texttt{REGBANK} instruction - this means only one of the sets can be accessed at a time.
-
-        To store values in the inactive bank, the \texttt{STAR} instruction is provided - it's used to store a value from the active bank register in another register that is in the inactive bank.
-
-        \subsection{New \texttt{COMPARECY} and \texttt{TESTCY} Instructions}
-
-        Instructions added to make comparing multi-byte types easier. They store the flags (carry and zero) and propagate them according to the progress through the single bytes.
 
         \subsection{New \texttt{LOAD\&RETURN} Instruction and \texttt{STRING} Directive}
 
@@ -145,11 +146,9 @@ Most of the modern computer processors are programmed using a fairly complicated
 
 \chapter{Compiler Choice}\label{compiler}
 
-As starting a new compiler from scratch would not be possible in time limited by time that is available for the bachelor's thesis, I had to choose an existing one and modify it.
+As starting a new compiler from scratch would not be possible in the limited time frame of a bachelor's thesis, I had to choose an existing front-end and provide a corresponding back-end part for the target platform.
 
-This basically rules out all of the proprietary compilers and the selection limited to those from the world of free and open source software. In the end, I was left with the following three.
-
-%% TODO celou tu vec s popisem frontendu bude potreba vzit vic do hloubky
+This basically rules out all of the proprietary compilers and the selection limited to those from the world of free and open source software. In the end, the choice consisted of the following three ones:
 
     \section{GNU Compiler Collection}
 
@@ -159,15 +158,19 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     The documentation of the inner functionality is not very well arranged and it is hard to find it. Because of its heritage, the structure does not seem very transparent.
 
+    Free Software Foundation and the GNU Project are holding governance over the development and are prohibiting major changes to the architecture or code style which drives many new developers away.
+
     \section{Low Level Virtual Machine}
 
-    LLVM, or, as this project is targeting C compiling, its front-end Clang, is a modern project with a great gain of popularity as it implements the latest features and standards very fast and provides some interesting tools, like static analyzer
+    LLVM is a modern project with a gaining popularity in past years for implementing the features very fast and providing of interesting and useful tools, like static analyzer.
 
-    Compared to GCC, it is a really young project, started in 2005, and more flexible as it is not governed by Free Software Foundation and the GNU Project.
+    Its C and C++ front-end, Clang, is adding the latest features of the new language standards and their drafts sooner than the competitors.
 
-    It is also interesting to mention its development is sponsored by big companies like Google or Apple.
+    Compared to GCC, LLVM is a really young project. It was founded in 2005. The codebase is dynamically changing, written in C++ with heavy usage of templates and automatically generated code.
 
-    LLVM provides a very well documented intermediate representation of the compiled source code. Its documentation is a publicly visible document on their wiki page with every detail described.
+    Its development is sponsored by companies like Google, for example to provide ability to run native applications in the browser (NaCl project) or Apple, which utilizes the ecosystem in the official development toolkit provided for their products.
+
+    LLVM provides a very well documented intermediate representation of the compiled source code. Its documentation is publicly visible on their wiki page, every necessary detail is described and the community provides several easy ways to be approached.
 
         \subsection{Architecture}
 
@@ -181,12 +184,10 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     It optimizes the compiled source code with focusing on issues appearing on small devices.
 
-    The intermediate code is not very well documented (there is a list of all the Icodes on the project's wiki) but is simple enough to be understandable.
+    The intermediate code is not documented very well (there is a list of all the Icodes on the project's wiki) but is simple enough to be understandable.
 
     %does it?
 %     Unlike the previous two compilers, it provides opcodes for operations such as port access %% TODO overit, nejsem si ted uplne jisty a nemam to u sebe
-
-    Its development is slow
 
 \chapter{Existing Solutions}\label{existing}
 

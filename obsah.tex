@@ -358,87 +358,87 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
 In this chapter, the technical details of the project are discussed.
 
-\section{Base Layer}
+    \section{Base Layer}
 
-Using pure C library calls and macros in a C++ project would be wasting potential of the language, that's why the project is building upon a wrapper library for the \emph{SDCC} internals instead of them directly.
+    Using pure C library calls and macros in a C++ project would be wasting potential of the language, that's why the project is building upon a wrapper library for the \emph{SDCC} internals instead of them directly.
 
-The whole wrapper library is included in the \texttt{wrap.h} and \texttt{wrap.cc} files.
+    The whole wrapper library is included in the \texttt{wrap.h} and \texttt{wrap.cc} files.
 
-    \subsection{Approach}
+        \subsection{Approach}
 
-    Every needed \emph{SDCC} structure is wrapped in its own class adding new methods.
+        Every needed \emph{SDCC} structure is wrapped in its own class adding new methods.
 
-    The C++ classes are inheriting the structures themselves (to provide ability to up-cast directly).
+        The C++ classes are inheriting the structures themselves (to provide ability to up-cast directly).
 
-    No other member variables are added, the memory footprint is the same. Actually, the pointers between the classes and their parent structures can be converted safely in both ways. This is not encouraged though as the language itself doesn't support this operation implicitly.
+        No other member variables are added, the memory footprint is the same. Actually, the pointers between the classes and their parent structures can be converted safely in both ways. This is not encouraged though as the language itself doesn't support this operation implicitly.
 
-    \subsection{Solution}
+        \subsection{Solution}
 
-    Most of the code is generated using regular expressions, then modified by hand to provide the required functionality.
+        Most of the code is generated using regular expressions, then modified by hand to provide the required functionality.
 
-    The methods added to the classes are usually just wrapping the functions and macros from \emph{SDCC}.
+        The methods added to the classes are usually just wrapping the functions and macros from \emph{SDCC}.
 
-    There were some, unfortunately, that required being copied over to the code due to higher type safety of C++ when compared to C. This is the case of \texttt{bool ICode::skipNoOp()} method for example.
+        There were some, unfortunately, that required being copied over to the code due to higher type safety of C++ when compared to C. This is the case of \texttt{bool ICode::skipNoOp()} method for example.
 
-\section{Utility classes}
+    \section{Utility classes}
 
-To provide better readable code and easier debugging, there are some classes provided.
+    To provide better readable code and easier debugging, there are some classes provided.
 
-Everything covered here can be found in the \texttt{util.h} and \texttt{util.cc} files.
+    Everything covered here can be found in the \texttt{util.h} and \texttt{util.cc} files.
 
-    \subsection{Emitter}\label{emitter}
+        \subsection{Emitter}\label{emitter}
 
-    Working in a similar fashion to the streams in the \emph{C++ STL} library, this class implements the final assembly output.
+        Working in a similar fashion to the streams in the \emph{C++ STL} library, this class implements the final assembly output.
 
-    The single global instance of this class is initialized on start-up, configuring the output file and output format to hide these details from the generating code itself.
+        The single global instance of this class is initialized on start-up, configuring the output file and output format to hide these details from the generating code itself.
 
-    Streaming (or left shift) operators are overloaded to make the instruction emitting stand out from the code.
+        Streaming (or left shift) operators are overloaded to make the instruction emitting stand out from the code.
 
-    Many instructions have different forms for single- and multi- byte variables used as their operands. For this purpose, the class also provides an iterator variable, declared as \texttt{static public int i}.
+        Many instructions have different forms for single- and multi- byte variables used as their operands. For this purpose, the class also provides an iterator variable, declared as \texttt{static public int i}.
 
-\section{Instruction generator}
+    \section{Instruction generator}
 
-\texttt{gen.h} and \texttt{gen.cc}
+    \texttt{gen.h} and \texttt{gen.cc}
 
-To avoid code duplication as much as possible, every instruction is generated using cycles wrapping the \texttt{Emitter}\ref{emitter} class.
+    To avoid code duplication as much as possible, every instruction is generated using cycles wrapping the \texttt{Emitter}\ref{emitter} class.
 
-This helps code clarity in the \texttt{ICode} processing functions themselves, limiting it to pure logic of handling the needed information.
+    This helps code clarity in the \texttt{ICode} processing functions themselves, limiting it to pure logic of handling the needed information.
 
-\section{Variable storage}
+    \section{Variable storage}
 
-All the included sections are named after the classes in the source code to provide a comprehensible description of their purpose.
+    All the included sections are named after the classes in the source code to provide a comprehensible description of their purpose.
 
-\texttt{ralloc.h} and \texttt{ralloc.cc}
+    \texttt{ralloc.h} and \texttt{ralloc.cc}
 
-    \subsection{Allocator}
+        \subsection{Allocator}
 
-    Singleton class used as an entrance to the generator itself.
+        Singleton class used as an entrance to the generator itself.
 
-    \subsection{Byte Subclasses - MemoryCell and Register}
+        \subsection{Byte Subclasses - MemoryCell and Register}
 
-    \subsection{Bank}
+        \subsection{Bank}
 
-    Two instances of this class are present in the compiler, corresponds to each register bank contained in the processor.
+        Two instances of this class are present in the compiler, corresponds to each register bank contained in the processor.
 
-    It collects all 16 registers and manages their allocation for variables and handles their clearing or moving to memory.
+        It collects all 16 registers and manages their allocation for variables and handles their clearing or moving to memory.
 
-    \subsection{Memory}
+        \subsection{Memory}
 
 
 \chapter{Port Features}\label{features}
 
-\section{Code clarity}
+    \section{Code clarity}
 
-%extensibility sviti cervene, TODO
-The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2\ref{prev_pbcc}.
+    %extensibility sviti cervene, TODO
+    The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2\ref{prev_pbcc}.
 
-Providing a C++ API also helps by providing more syntax sugar for anybody who wants to further modify the compiler. Using class methods instead of macros and functions also adds the possibility to use an IDE\footnote{Integrated Development Environment} with method suggestion.
+    Providing a C++ API also helps by providing more syntax sugar for anybody who wants to further modify the compiler. Using class methods instead of macros and functions also adds the possibility to use an IDE\footnote{Integrated Development Environment} with method suggestion.
 
-\section{KCPSM6 support}
+    \section{KCPSM6 support}
 
-There is no other compiler designed to produce code for the newest revision of the PicoBlaze processor.
+    There is no other compiler designed to produce code for the newest revision of the PicoBlaze processor.
 
-The most modern ones support only KCPSM3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
+    The most modern ones support only KCPSM3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
 
 \chapter{Conclusion}\label{conclusion}
 

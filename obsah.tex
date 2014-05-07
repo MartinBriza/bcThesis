@@ -1,19 +1,22 @@
 %=========================================================================
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
+\definecolor{gray}{gray}{0.5}
+\newcommand{\todo}[1]{\textcolor{red}{TODO\:} \textcolor{gray}{#1}}
+
 \chapter{Introduction}\label{introduction}
 
 Subject of this thesis project is constructing a C programming language compiler for the soft-core processor PicoBlaze-6.
 
     \section{The C Programming Language}
 
-    %% Tady budou chtit citace... ono ostatne asi vsude kde uvadim nejake roky
+    \todo{citace, citace, citace}
 
-    The C programming language was created in the seventies %% TODO spisovne?
+    The C programming language was created in the seventies \todo{spisovne?}
     of the twentieth century by Dennis Ritchie and Ken Thompson. In this project, I focused mainly on implementing its two latest standards, ISO/IEC 9899:1999 and partially ISO/IEC 9899:2011.
 
     \section{The Previous Project}
-    Similar thesis topic was elaborated by Jakub Horník as his %% TODO citace
+    Similar thesis topic was elaborated by Jakub Horník as his \todo{citace}
     master's thesis in year 2011.
 
     While he was writing the thesis, a new version of the target processor was released (see chapter~\ref{processor}). More of the resulting application is discussed in section~\ref{prev_pbcc}.
@@ -24,7 +27,7 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
 Historically, the name of the design was \texttt{KCPSM}, as for Ken Chapman's Programmable State Machine. This term is now still used in the FPGA design - the components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
 
-The most up to date version is now 6 with its latest release 5 published on 30 September 2012. The previous version, 3, had its last 7th revision released in October 2003. %% TODO citace?
+The most up to date version is now 6 with its latest release 5 published on 30 September 2012. The previous version, 3, had its last 7th revision released in October 2003. \todo{citace nebo aspon link na forum}
 
     \section{Main Features}
 
@@ -51,6 +54,8 @@ The most up to date version is now 6 with its latest release 5 published on 30 S
     \section{Practical usage}
 
     A sequential processor, in comparison to parallel hardware design, is much more feasible for implementing state machines and computational cycles.
+
+    \todo{Pripadne nejake linky na pripady/priklady uziti atp}
 
     \section{New features and properties of PicoBlaze-6}
 
@@ -193,7 +198,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PCComp}\label{pccomp}
 
-    Picoblaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge, %% TODO link
+    Picoblaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge, \todo{link}
     yet there are no files to download or source code in the repository and the only relevant activity visible is a question where to actually download the compiler.
 
     I managed to find a Windows binary in version 1.8.4 in a web archive and a user manual describing the compiler's features, both created in year 2005 or 2006.
@@ -223,10 +228,10 @@ This basically rules out all of the proprietary compilers and the selection limi
     \section{PBCC by Bohumil Nováček}\label{not_quite_c}
 
     %% https://dip.felk.cvut.cz/browse/details.php?f=F3&d=K13136&y=2008&a=xnovaceb&t=bach
-    %% MORE TODO
+    \todo{vic popsat, dodat link}
     This bachelor thesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in year 2008 when only PCComp\ref{pccomp} existed.
 
-    Bohumil has written the program as a part of his bachelor thesis, resulting in great %TODO
+    Bohumil has written the program as a part of his bachelor thesis, resulting in great \todo{in great TODO}
 
         \subsection{Features}
 
@@ -260,9 +265,9 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PBCC by Jakub Horník}\label{prev_pbcc}
 
-    %% FIXME ach jo, tohle je fakt hrozna cast, mel bych to prepsat, ty vety nedavaji smysl a nenavazuji
+    \todo{FIXME prepsat}
 
-    PicoBlaze C Compiler is a project sponsored by Virtuální laboratoř aplikovaných mikroprocesorů %% TODO overit
+    PicoBlaze C Compiler is a project sponsored by Virtuální laboratoř aplikovaných mikroprocesorů \todo{Overit}
     realized on the Faculty of Information Technology, Brno University of Technology.
 
     It was written in years 2010 - 2011 by Jakub Horník as a part of his master's thesis and is now maintained by Zbyněk Křivka, supervisor of this thesis.
@@ -336,7 +341,7 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
             First attempts to run the simulator in \emph{Wine}\footnote{WINE is not an Emulator - an open source Windows API implementation} were quite unsuccessful as it was capable of simulation only the code which was included in the distributed binary package.
 
-            % TODO hadam ze tady to bude chtit citace
+            \todo{Citace/linky}
             However, the application itself is hosted under the GPLv2 open source license in the Google Code repository. 
 
             It's not possible to compile it directly from the source provided (at least at the time of writing of the thesis). The needed steps to finish the compilation successfully are fixing the \texttt{qmake} project file to include all needed source files and adding one missing icon for the GUI (for example by copying the existing ones in different colors).
@@ -429,7 +434,7 @@ In this chapter, the technical details of the project are discussed.
 
     \section{Code clarity}
 
-    %extensibility sviti cervene, TODO
+    \todo{extensibility asi neni slovo}
     The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2\ref{prev_pbcc}.
 
     Providing a C++ API also helps by providing more syntax sugar for anybody who wants to further modify the compiler. Using class methods instead of macros and functions also adds the possibility to use an IDE\footnote{Integrated Development Environment} with method suggestion.

@@ -115,15 +115,21 @@ The most up to date version is now 6 with its latest release 5 published on 30 S
 
 Most of the modern computer processors are programmed using a fairly complicated binary instruction set. To make writing more complex and powerful applications, we are now using programming languages that are translated (\emph{compiled}) into the low level binary form easily understood by the processor.
 
+\todo {Otazkou je, jestli se chci norit do popisu struktury prekladace}
+
     \section{Compiler structure}
 
     A typical programming language compiler consists of two (or three) parts:
+
+    \todo{Obrazek backend->IC->frontend nebo tak neco}
 
         \subsection{Front-end}
 
             Does lexical, syntactic and semantic analysis of the input code according to the rules of the given language.
 
             It produces the intermediate code as its output, to be further processed.
+            
+            \todo{Obrazek LA->SA->SA->IC nebo neco v tom smyslu}
 
             \subsubsection{Lexical analysis}
 

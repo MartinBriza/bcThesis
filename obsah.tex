@@ -25,11 +25,15 @@ Subject of this thesis project is constructing a C programming language compiler
 
 Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-programmable gate array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This of course means the processor is not meant to be physically manufactured, yet it would be possible.
 
-Historically, the name of the design was \texttt{KCPSM}, as for Ken Chapman's Programmable State Machine. This term is now still used in the FPGA design - the components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
+Historically, the name of the design was \texttt{KCPSM}, for \emph{Ken Chapman's Programmable State Machine} and then \emph{Constant Coded Programmable State Machine}. This term is now still used in the FPGA design - the components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
 
-The most up to date version is now 6 with its latest release 5 published on 30 September 2012. The previous version, 3, had its last 7th revision released in October 2003. \todo{citace nebo aspon link na forum}
+The fact the processor is soft-core only makes shipping bug fix and feature updates possible to the users of the current version. The most up to date release of the current version is the 8th one, published on March 31, 2014.\todo{release7: http://forums.xilinx.com/t5/PicoBlaze/Release-7-of-KCPSM6-What-s-New/m-p/385325 na webu ale visi uz 8}.
+
+The previous version, PicoBlaze-3, had its last 7th revision released in October 2003. \todo{citace nebo aspon link na forum}
 
     \section{Main Features}
+
+    \emph{PicoBlaze} is a RISC\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles.
 
     \begin{center}
     \begin{tabular}{ @{\extracolsep{\fill} } r | l }
@@ -109,7 +113,13 @@ The most up to date version is now 6 with its latest release 5 published on 30 S
 
         This instruction allows the program to output a constant instead of loading it into a register and outputting it using the regular \texttt{OUTPUT}.
 
+    \section{PacoBlaze}
 
+    There is an open-source\footnote{BSD licensed} clone of the \emph{PicoBlaze} processor written in Verilog.
+
+    It's main devise is the possibility to use it with hardware not provided by Xilinx and modifiability and configurability. Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use the smallest required subset - reducing field usage possibly.
+
+    The latest version is 2.2 that was released in the year 2007 so it can't possibly implement the new instructions of PicoBlaze-6 which this project tries to use as much as possible.
 
 \chapter{Programming language compiler}
 

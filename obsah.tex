@@ -117,7 +117,7 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
     There is an open-source\footnote{BSD licensed} clone of the \emph{PicoBlaze} processor written in Verilog.
 
-    It's main devise is the possibility to use it with hardware not provided by Xilinx and modifiability and configurability. Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use the smallest required subset - reducing field usage possibly.
+    Its main devise is the possibility to use it with hardware not provided by Xilinx and modifiability and configurability. Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use the smallest required subset - reducing field usage possibly.
 
     The latest version is 2.2 that was released in the year 2007 so it can't possibly implement the new instructions of PicoBlaze-6 which this project tries to use as much as possible.
 
@@ -127,19 +127,53 @@ Most of the modern computer processors are programmed using a fairly complicated
 
 \todo {Otazkou je, jestli se chci norit do popisu struktury prekladace}
 
-    \section{Compiler structure}
+    \section{Compiler Structure}
 
-    A typical programming language compiler consists of two (or three) parts:
+    A typical programming language compiler consists of two to four main parts:
 
-    \todo{Obrazek backend->IC->frontend nebo tak neco}
+    First part is the optional preprocessor which prepares the source code for the front-end, for example by removing comments or expanding macro definitions.
+
+    A language front-end, which transforms the code from a programming language to its simple intermediate and internal representation.
+
+    An intermediate code optimizer, which searches the representation for patterns that can be changed to more efficient, smaller or faster equivalents. This part, due to its nature, is optional, too.
+
+    And finally, the back-end, that generates the target code for the processor itself, be it assembly code, virtual machine code or a processor-native code.
+
+    \begin{center}\begin{tikzpicture}
+    \tikzstyle{block} = [draw, rectangle, minimum width=14.5em, minimum height=2.2em]
+    % Dialectics
+    \node (Program) {\emph{Source Program}};
+    \node[block,right=of Program] (Preprocessor) {Preprocessor};
+    \node[block,below=of Preprocessor] (Front) {Front-End};
+    \node[block,below=of Front] (IMO) {Intermediate Code Optimizer};
+    \node[block,below=of IMO] (Back) {Back-End};
+    \node[right=of Back,font=\bf] (Target) {\emph{Target Code}};
+
+    \draw[->] (Program) edge (Preprocessor);
+    \draw[->] (Preprocessor) edge node[auto] {\emph{Stripped Source Code}} (Front.north);
+    \draw[->] (Front) edge node[auto] {\emph{Intermediate Code}} (IMO);
+    \draw[->] (IMO) edge node[auto] {\emph{Optimized Intermediate Code}} (Back);
+    \draw[->] (Back) edge (Target);
+
+    \end{tikzpicture}\end{center}
+
+        \subsection{Preprocessor}
 
         \subsection{Front-end}
 
             Does lexical, syntactic and semantic analysis of the input code according to the rules of the given language.
 
             It produces the intermediate code as its output, to be further processed.
-            
-            \todo{Obrazek LA->SA->SA->IC nebo neco v tom smyslu}
+
+            \begin{center}\begin{tikzpicture}
+            % Dialectics
+            \node (Program) {Source Program};
+            \node[draw] (Lex) {Lexical Analyzer};
+            \node[draw] (Syntax) {Syntactic Analyzer};
+            \node[draw] (Semantic) {Semantic Analyzer};
+
+
+            \end{tikzpicture}\end{center}
 
             \subsubsection{Lexical analysis}
 
@@ -311,9 +345,9 @@ This basically rules out all of the proprietary compilers and the selection limi
 
 \chapter{New Port Creation}\label{port}
 
-SDCC is basically a framework for compiler creation, providing handy tools that make compiling for the programmer's platform easier.
+SDCC is basically a framework for compiler creation, providing useful tools that make compiling for the programmer's platform easier.
 
-Its architecture is divided into \emph{ports}, units containing code related only to one target platform. These can be divided even further to provide more flexibility regarding different types of processors.
+The architecture of SDCC is based upon the so called \emph{ports}, units containing code related only to one target platform. These can be divided even further to provide more flexibility regarding different types of processors.
 
     \section{Adding a New Port}
 
@@ -331,14 +365,26 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
     \item And create an \texttt{extern} reference to the \texttt{PORT} instance from \texttt{src/pblaze/main.c}, for example:
 
-    \texttt{\#if !OPT\_DISABLE\_PBLAZE}
-
-    \texttt{extern PORT pblaze\_port;}
-
-    \texttt{\#endif}
+\begin{verbatim}#if !OPT_DISABLE_PBLAZE
+extern PORT pblaze_port;
+#endif\end{verbatim}
 
     \item In \texttt{src/SDCCmain.c}, insert a reference to the structure defined in \texttt{src/pblaze/main.c}.
 
+    \end{enumerate}
+
+        \subsection{Automation of new port addition}
+
+        These tasks are automated in the included \texttt{glue.sh} script. When it's executed in  Bash\footnote{Bourne Again Shell, http://www.gnu.org/software/bash/} with the \texttt{SDCC\_HOME} environment variable set to point to the directory with both PBCC and SDCC source code, it completes all the necessary tasks.
+
+    \section{Compilation}
+
+    After the port was added, SDCC can be compiled. The steps to achieve successful compilation are:
+
+    \begin{enumerate}
+    \item \texttt{autoconf} creates a \texttt{configure} script to configure the components and compiler options of the final binary
+    \item \texttt{./configure} is a script that compiles a Makefile for the compilation itself. It's possible, for example, to modify the optimization of the compiler binary or disable compilation of \emph{ports} of architectures we won't need.
+    \item \texttt{make} is the compilation script itself. You can speed the whole process by using the \texttt{-jX} argument specifying that \texttt{X} compiler processes should run at the same time.
     \end{enumerate}
 
     \section{Tools Used}
@@ -388,7 +434,15 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
         Tightly related to Eclipse, it's possible to use it as a part of the user interface.
 
+        \subsection{git}\label{git}
 
+        Git is a Distributed Revision Control System allowing the user to create snapshots (\emph{commits}) of the source code and store them in remote repositories.
+
+        It focuses on speed and team development. 
+
+        The whole project is hosted under the GPLv2 license on Github\footnote{https://github.com/krivka/pbccv3}.
+
+        
 
 
 \chapter{Implementation Design}\label{design}
@@ -559,15 +613,13 @@ In this chapter, the technical details of the project are discussed.
             Then, assuming the variable was not loaded in the registers beforehand and the other variables were already used (\texttt{foo} is in \texttt{s0} and \texttt{s1} and \texttt{bar} is in \texttt{s2} and \texttt{s3}), the resulting assembly will take the following form:
 
             \begin{center}
-            \begin{verbatim}
-            load    s4,     s0              ; iTemp0[0]=foo[0]
-            load    s5,     s1              ; iTemp0[1]=foo[0]
-            add     s4,     0x2a            ; iTemp0[0]+=(value)
-                                            ; iTemp1=iTemp0
-            sub     s4,     s2              ; iTemp1[0]-=bar[0]
-            subcy   s5,     s3              ; iTemp1[1]-=bar[1]
-                                            ; baz=iTemp1
-            \end{verbatim}\end{center}
+\begin{verbatim}load    s4,     s0              ; iTemp0[0]=foo[0]
+load    s5,     s1              ; iTemp0[1]=foo[0]
+add     s4,     0x2a            ; iTemp0[0]+=(value)
+                                ; iTemp1=iTemp0
+sub     s4,     s2              ; iTemp1[0]-=bar[0]
+subcy   s5,     s3              ; iTemp1[1]-=bar[1]
+                                ; baz=iTemp1\end{verbatim}\end{center}
 
             Each byte in the operation is covered with the regular C-style array notation.
 

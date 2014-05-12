@@ -26,6 +26,16 @@
 \usepackage[T1, IL2]{fontenc}
 \usepackage{url}
 \usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,shapes.symbols,shapes.callouts,shapes.geometric,patterns,calc} 
+\tikzset{
+    vertex/.style = {
+        circle,
+        fill            = black,
+        outer sep = 2pt,
+        inner sep = 1pt,
+    }
+}
 \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
 
 %zde muzeme vlozit vlastni balicky

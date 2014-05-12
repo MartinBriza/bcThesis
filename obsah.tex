@@ -125,7 +125,7 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
 Most of the modern computer processors are programmed using a fairly complicated binary instruction set. To make writing more complex and powerful applications, we are now using programming languages that are translated (\emph{compiled}) into the low level binary form easily understood by the processor.
 
-\todo {Otazkou je, jestli se chci norit do popisu struktury prekladace}
+In this chapter, the most vital parts and terms in construction of a compiler are discussed, with focus on C language.
 
     \section{Compiler Structure}
 
@@ -135,29 +135,45 @@ Most of the modern computer processors are programmed using a fairly complicated
 
     A language front-end, which transforms the code from a programming language to its simple intermediate and internal representation.
 
-    An intermediate code optimizer, which searches the representation for patterns that can be changed to more efficient, smaller or faster equivalents. This part, due to its nature, is optional, too.
+    An intermediate code optimizer searches the representation for patterns that can be changed to more efficient, smaller or faster equivalents. This part, due to its nature, is optional, too.
 
     And finally, the back-end, that generates the target code for the processor itself, be it assembly code, virtual machine code or a processor-native code.
 
     \begin{center}\begin{tikzpicture}
     \tikzstyle{block} = [draw, rectangle, minimum width=14.5em, minimum height=2.2em]
-    % Dialectics
     \node (Program) {\emph{Source Program}};
-    \node[block,right=of Program] (Preprocessor) {Preprocessor};
-    \node[block,below=of Preprocessor] (Front) {Front-End};
-    \node[block,below=of Front] (IMO) {Intermediate Code Optimizer};
-    \node[block,below=of IMO] (Back) {Back-End};
-    \node[right=of Back,font=\bf] (Target) {\emph{Target Code}};
+    \node[block,right=of Program,thick] (Preprocessor) {Preprocessor};
+    \node[block,below=of Preprocessor,thick] (Front) {Front-End};
+    \node[block,below=of Front,thick] (IMO) {Intermediate Code Optimizer};
+    \node[block,below=of IMO,thick] (Back) {Back-End};
+    \node[right=of Back,font=\bf,thick] (Target) {\emph{Target Code}};
 
-    \draw[->] (Program) edge (Preprocessor);
-    \draw[->] (Preprocessor) edge node[auto] {\emph{Stripped Source Code}} (Front.north);
-    \draw[->] (Front) edge node[auto] {\emph{Intermediate Code}} (IMO);
-    \draw[->] (IMO) edge node[auto] {\emph{Optimized Intermediate Code}} (Back);
-    \draw[->] (Back) edge (Target);
+    \draw[->, thick] (Program) edge (Preprocessor);
+    \draw[->,thick] (Preprocessor) edge node[auto] {\emph{Stripped Source Code}} (Front.north);
+    \draw[->,thick] (Front) edge node[auto] {\emph{Intermediate Code}} (IMO);
+    \draw[->,thick] (IMO) edge node[auto] {\emph{Optimized Intermediate Code}} (Back);
+    \draw[->,thick] (Back) edge (Target);
 
     \end{tikzpicture}\end{center}
 
         \subsection{Preprocessor}
+
+        Preprocessor performs a simple task of removing or replacing text in the input source code according to some pre-set rules.
+
+        The most common task is removing comments to leave only language defined tokens for the further stages of compilation.
+
+        In the C programming language, there are preprocessor macros, too. These serve a purpose of replacing and inserting text. However, describing the entirety of the C preprocessor is a task beyond limits of this thesis, only few directives are listed, along with their simplified descriptions.
+
+        \begin{center}\begin{tabular}{r|l}
+            \verb|#include "file"| or \verb|<file>| & Behaves as if the whole contents of \verb|file| were inserted \\
+            & instead of it\\
+            \verb|#define MACRO ...| & Every occurence of \verb|NAME| in the code is replaced with \\
+            & what's substituted with \verb|...| (until the end of line)\\
+            \verb|#if cond| & The following lines until \verb|#endif| are pasted if \verb|cond| is\\
+            & met. \verb|cond| supports C expression syntax.\\
+            \verb|#ifdef MACRO| & Equivalent to \verb|#if defined(MACRO)|. True if \verb|MACRO| was\\
+            & defined.\\
+        \end{tabular}\end{center}
 
         \subsection{Front-end}
 
@@ -166,12 +182,22 @@ Most of the modern computer processors are programmed using a fairly complicated
             It produces the intermediate code as its output, to be further processed.
 
             \begin{center}\begin{tikzpicture}
-            % Dialectics
-            \node (Program) {Source Program};
-            \node[draw] (Lex) {Lexical Analyzer};
-            \node[draw] (Syntax) {Syntactic Analyzer};
-            \node[draw] (Semantic) {Semantic Analyzer};
+            \tikzstyle{block} = [draw, rectangle, minimum width=10em, minimum height=2.2em]
+            \node (Program) {\emph{Source Program}};
+            \node[block,right=of Program,thick] (Lex) {Lexical Analyzer};
+            \node[block,right=of Lex,thick] (Parser) {Parser};
+            \node[block,below=of Lex,thick] (SymTab) {Symbol Table};
+            \node[block,right=of SymTab,thick] (CodeGen) {Code Generator};
+            \node[below=of CodeGen,font=\bf,thick] (IM) {\emph{Intermediate Code}};
 
+            \draw[->,thick] (Program) -- (Lex);
+            \draw[transform canvas={yshift=0.5ex},->,thick] (Lex) -- (Parser);
+            \draw[transform canvas={yshift=-0.5ex},<-,thick] (Lex) -- (Parser);
+            \draw[transform canvas={xshift=0.5ex},->,thick] (CodeGen) -- (Parser);
+            \draw[transform canvas={xshift=-0.5ex},<-,thick] (CodeGen) -- (Parser);
+            \draw[<->,thick] (Lex) -- (SymTab);
+            \draw[<->,thick] (SymTab) -- (CodeGen);
+            \draw[->,thick] (CodeGen) -- (IM);
 
             \end{tikzpicture}\end{center}
 
@@ -180,11 +206,13 @@ Most of the modern computer processors are programmed using a fairly complicated
                 As the first part of the front-end, the input string of characters is broken into tokens according to the grammatical rules which are set by the language standard.
 
                 In the case of the C language, they are in the form of regular expressions which means they are being matched by a state machine.
+                
+            \subsubsection{Symbol Table}
 
-            \subsubsection{Syntactic analysis}
+            \subsubsection{Parser}
 
 
-            \subsubsection{Semantic analysis}
+            \subsubsection{Code Generator}
 
 
         \subsection{Intermediate Code}

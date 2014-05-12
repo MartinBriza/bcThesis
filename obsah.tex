@@ -205,14 +205,51 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             \subsubsection{Lexical analysis}
 
-                As the first part of the front-end, the input string of characters is broken into tokens according to the grammatical rules which are set by the language standard.
+                \emph{Lexical analyzer} comes into contact with the raw source code.
 
-                In the case of the C language, they are in the form of regular expressions which means they are being matched by a state machine.
-                
+                Reading the input stream character by character, it breaks it down to segments called \emph{tokens}, according to rules that are set by the language standard.
+
+                For example, there can be a token representing a \emph{keyword} (like \texttt{if} or \texttt{for}), a literal value (\texttt{42} or \verb'"string"',...) or a type or symbol name (\texttt{foo}, \texttt{main},...). 
+
+                A token of the \texttt{if} keyword will be always represented with the same string - \texttt{if}, but a variable name in C can take form of any string that matches this regular expression:
+
+                \begin{center}\texttt{[A-Za-z\_][A-Za-z\_0-9]*}\end{center}
+
+                These names and values are then stored in the \emph{symbol table}, which will be discussed next.
+
             \subsubsection{Symbol Table}
+
+                A \emph{symbol table} is a container storing names of all \emph{symbols} that the \emph{lexical analyzer} has detected.
+
+                The values here are used further in the compilation, either to resolve the identity of \emph{tokens}, or to actually assign the literal values and use them in the program itself.
 
             \subsubsection{Parser}
 
+                Blah
+
+                \begin{center}
+                \verb|1 * foo + 5 * bar|
+                \end{center}
+
+                Blah blah.
+
+                \begin{center}\begin{tikzpicture}[node distance=1.5cm]
+                \node (1) {1};
+                \node[right=of 1] (foo) {foo};
+                \node[right=of foo] (5) {5};
+                \node[right=of 5] (bar) {bar};
+                \node (mulL) [above right of=1] {*};
+                \node (mulR) [above right of=5] {*};
+                \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
+                \node (add) [above of=mulM] {+};
+
+                \draw (add) -- (mulL);
+                \draw (add) -- (mulR);
+                \draw (mulL) -- (1);
+                \draw (mulL) -- (foo);
+                \draw (mulR) -- (5);
+                \draw (mulR) -- (bar);
+                \end{tikzpicture}\end{center}
 
             \subsubsection{Code Generator}
 

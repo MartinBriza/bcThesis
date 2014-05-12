@@ -234,14 +234,14 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
                 Blah blah.
 
                 \begin{center}\begin{tikzpicture}[node distance=1.5cm]
-                \node (1) {1};
-                \node[right=of 1] (foo) {foo};
-                \node[right=of foo] (5) {5};
-                \node[right=of 5] (bar) {bar};
-                \node (mulL) [above right of=1] {*};
-                \node (mulR) [above right of=5] {*};
+                \node (add) {+};
+                \node (mulL) [below left of=add,xshift=-33] {*};
+                \node (mulR) [below right of=add,xshift=33] {*};
+                \node (1) [below left of=mulL] {1};
+                \node (foo) [below right of=mulL] {\texttt{foo}};
+                \node (5) [below left of=mulR] {5};
+                \node (bar) [below right of=mulR] {\texttt{bar}};
                 \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
-                \node (add) [above of=mulM] {+};
 
                 \draw (add) -- (mulL);
                 \draw (add) -- (mulR);
@@ -250,6 +250,28 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
                 \draw (mulR) -- (5);
                 \draw (mulR) -- (bar);
                 \end{tikzpicture}\end{center}
+
+                Blah blah blah. Blah blah!
+
+                \begin{center}\begin{tikzpicture}[node distance=1.5cm]
+                \node (add) {+};
+                \node (mulL) [below left of=add,xshift=-33] {*};
+                \node (mulR) [below right of=add,xshift=33] {*};
+                \node (1) [below left of=mulL] {\texttt{\textless int\textgreater} 1};
+                \node (foo) [below right of=mulL] {\texttt{\textless float\textgreater foo}};
+                \node (5) [below left of=mulR] {\texttt{\textless int\textgreater} 5};
+                \node (bar) [below right of=mulR] {\texttt{\textless int\textgreater bar}};
+                \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
+
+                \draw (add) -- (mulL);
+                \draw (add) -- (mulR);
+                \draw (mulL) -- (1);
+                \draw (mulL) -- (foo);
+                \draw (mulR) -- (5);
+                \draw (mulR) -- (bar);
+                \end{tikzpicture}\end{center}
+
+                BLAH! BLAAAAH! BLAAAAAAAAAERGGHHHHHHHHHHH!!!1!!
 
             \subsubsection{Code Generator}
 

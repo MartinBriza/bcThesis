@@ -67,7 +67,7 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
     The most important ones are covered in this section in descending order according to their impact on programming in C and the compiler itself.
 
-        \subsection{New \texttt{JUMP@} and \texttt{CALL@} Instructions}
+        \subsection{New \texttt{JUMP@} and \texttt{CALL@} Instructions}\label{jumpat}
 
         Indirect jumps and calls, provided the address of the function or label, are possible in the new version.
 
@@ -355,7 +355,7 @@ Its architecture is divided into \emph{ports}, units containing code related onl
 
         One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is written in C++ and Qt, so its usage is not limited only to the Windows platform which is the only one Mediatronix distributes the binary form to.
 
-            \subsubsection{Running under Linux}
+            \subsubsection{Running Under Linux}
 
             First attempts to run the simulator in \emph{Wine}\footnote{WINE is not an Emulator - an open source Windows API implementation} were quite unsuccessful as it was capable of simulation only the code which was included in the distributed binary package.
 
@@ -419,7 +419,7 @@ In this chapter, the technical details of the project are discussed.
 
         There were some, unfortunately, that required being copied over to the code due to higher type safety of C++ when compared to C. This is the case of \texttt{bool ICode::skipNoOp()} method for example.
 
-    \section{Utility classes}
+    \section{Utility Classes}
 
     To provide better readable code and easier debugging, there are some classes provided.
 
@@ -435,7 +435,7 @@ In this chapter, the technical details of the project are discussed.
 
         Many instructions have different forms for single- and multi- byte variables used as their operands. For this purpose, the class also provides an iterator variable, declared as \texttt{static public int i}.
 
-    \section{Instruction generator}
+    \section{Instruction Generator}
 
     \texttt{gen.h} and \texttt{gen.cc}
 
@@ -443,7 +443,7 @@ In this chapter, the technical details of the project are discussed.
 
     This helps code clarity in the \texttt{ICode} processing functions themselves, limiting it to pure logic of handling the needed information.
 
-    \section{Variable storage}
+    \section{Variable Storage}
 
     All the included sections are named after the classes in the source code to provide a comprehensible description of their purpose.
 
@@ -463,6 +463,132 @@ In this chapter, the technical details of the project are discussed.
 
         \subsection{Memory}
 
+    \section{Compiled Assembly Properties}
+
+    The compiler is producing commented assembly to be given to an assembler which then in turn produces various its binary equivalents or other formats, for example suitable for simulation.
+
+    In this section, the vital properties, required for getting grasp of the code (for its further modification by hand, for example), are discussed.
+
+        \subsection{Calling Conventions}
+
+        The calling conventions were designed to utilize as much of the variables as possible because of the limited capabilities of the processor.
+
+        Registers are saved to the function's stack by the caller, considering liveness of the variables.
+
+        The arguments are stored consecutively in little-endian order \footnote{The least significant byte is stored first, the most significant one last} in the registers.
+
+        For example, consider the following function:
+
+        \begin{center}
+            \texttt{int mul4b(int l, int r);}
+        \end{center}
+
+        Its initial register utilization would be as follows:
+
+        \begin{center}\begin{tabular}{ | c | c | c | c | c | c | c | c | }
+            \hline
+            \texttt{s0} & \texttt{s1} & \texttt{s2} & \texttt{s3} & \texttt{s4} & \texttt{s5} & \texttt{s6} & \texttt{s7} \\
+            \hline
+            \texttt{l[0]} & \texttt{l[1]} & \texttt{l[2]} & \texttt{l[3]} & \texttt{r[0]} & \texttt{r[1]} & \texttt{r[2]} & \texttt{r[3]} \\
+            \hline
+            \hline
+            \texttt{s8} & \texttt{s9} & \texttt{sA} & \texttt{sB} & \texttt{sC} & \texttt{sD} & \texttt{sE} & \texttt{sF} \\
+            \hline
+            free & free & free & free & free & free & free & \texttt{SP}\footnote{Stack Pointer} \\
+            \hline
+        \end{tabular}\end{center}
+
+        The returned value is stored in the first registers in the same way as the parameters were stored. Little-endian order limits the register usage in the caller to the bare minimum.
+
+        Restoring of the saved registers is done in the caller, too.
+
+        \subsection{Function Pointers}
+
+        As mentioned in new feature overview\ref{jumpat}, the processor now supports jumping to labels and calling functions that have their address loaded on run-time.
+
+        To make use of as much of the new specification as possible, the compiler supports calling function pointers using the \texttt{CALL@} instruction.
+
+        Prior to the instruction invocation itself, the function pointer is stored in the \texttt{sD} and \texttt{sE} registers. As the address of a function is larger than the size of one register, it has to be stored in two of them - \texttt{sD} cointains the upper 4 bits of the address and \texttt{sE} the lower 8 bits.
+
+        Rather than limiting all functions' arguments to reserve the two registers for a possible function pointer call, only pointers to functions with lesser than 13 bytes worth of arguments is possible.
+
+        Other than this, there is no limitation to function pointer usage.
+
+        \subsection{Register Bank Utilization}
+
+        From the perspective of register banks, there are two types of functions (as there are two banks). 
+
+        The first type is either function \texttt{main} or a state when the program hasn't entered \texttt{main} yet. This code has access only to variables stored in registers in \texttt{Bank A}.
+
+        The other type are all other functions. These have access to registers in Bank B.
+
+        Bank selection is handled from the code of the first type. This makes the other functions able to call any other function including itself. Any kind of recursion including \texttt{main} is not supported though.
+
+        Before and after the call, bank has to be switched to the appropriate one. Also, if the function returned any value, it has to be transferred from the other bank to the current one before the bank is switched.
+
+        In effect, this makes having most of the program logic in the \texttt{main} function, as it doesn't have to store most of its registers before calling a function, thus reducing the number of necessary \texttt{FETCH} and \texttt{STORE} instructions to move the local variables in the stack memory.
+
+        \subsection{Stack and Variable Storage}
+
+        Local variables of the program are initially created in the registers. Only once there is not enough room for any other variable needed for an operation in future, it is freed from the register and stored on the stack.
+
+        Stack pointer is stored only in register \texttt{sF} only in \texttt{Bank B}. Stack pointer is not tracked in the \texttt{main} function. As does register bank selection, this also makes recursive calls to \texttt{main} impossible.
+
+        The \texttt{sF} register in \texttt{main} is used only as a temporary storage for loading literal values into registers in the other register bank and to access the local variables' addresses.
+
+        \subsection{Arithmetic Operations}
+
+        Only basic arithmetic supported by the processor is implemented, that means there is no basic support for multiplication nor division of the variables.
+
+        The functions to mutliply can be extracted from the previous PBCC\ref{prev_pbcc} and inserted as inline assembly in a separate function, according to the calling functions.
+
+        Other than that, the operations are utilizing the improved instructions handling multi-byte variables in minimum cycles.
+
+        \subsection{Comments in the Code}
+
+        To improve the readability and comprehensiveness of the code, there are explanatory comments included in the compiled assembly.
+
+            \subsubsection{Instruction Comments}
+
+            Lines of most of the instructions contain a short comment explaining the instruction and its operands. This covers moves and arithmetic operations especially.
+
+            To demonstrate, when the following code snippet is compiled:
+
+            \begin{center}\texttt{int baz = 42 + foo - bar;}\end{center}
+
+            Then, assuming the variable was not loaded in the registers beforehand and the other variables were already used (\texttt{foo} is in \texttt{s0} and \texttt{s1} and \texttt{bar} is in \texttt{s2} and \texttt{s3}), the resulting assembly will take the following form:
+
+            \begin{center}
+            \begin{verbatim}
+            load    s4,     s0              ; iTemp0[0]=foo[0]
+            load    s5,     s1              ; iTemp0[1]=foo[0]
+            add     s4,     0x2a            ; iTemp0[0]+=(value)
+                                            ; iTemp1=iTemp0
+            sub     s4,     s2              ; iTemp1[0]-=bar[0]
+            subcy   s5,     s3              ; iTemp1[1]-=bar[1]
+                                            ; baz=iTemp1
+            \end{verbatim}\end{center}
+
+            Each byte in the operation is covered with the regular C-style array notation.
+
+            Also, notice only one byte of the literal value \texttt{42} (that is lower than the size of one byte) is being added to \texttt{iTemp0}. 
+
+            Moves on temporary variables to next variables in a more complex expressions are optimized out, too. They are marked in the assembly to point out that an other variable now resides in the particular registers.
+
+            \subsubsection{Function Comments}
+
+            Every function is prepended with a comment that states its name with a list of its arguments. Every argument's name is written in the list along with the registers it's stored in, in case it's not stored on stack directly.
+
+            For example, consider the following function:
+
+            \begin{center}\texttt{char func(long arg1, int arg2, char arg3);}\end{center}
+
+            Its representation in the assembly will be prepended with this comment:
+
+            \begin{center}\texttt{; Function func, arguments: [arg1:\{s0,s1,s2,s3,\},arg2:\{s4,s5,\},arg3:\{s6,\},]}\end{center}
+
+            
+
     \section{Testing}
 
     Several example source files were compiled and ran in a simulator to prove the resulting assembly corresponds to the input source code.
@@ -471,11 +597,11 @@ In this chapter, the technical details of the project are discussed.
 
         \texttt{PBlazSIM}\ref{pblazsim} was chosen to simulate the resulting code due to its simplicity, maturity and liveliness of the upstream developers. 
 
-            \subsubsection{Obtaining the simulation result}
+            \subsubsection{Obtaining the Simulation Result}
 
                 The simplicity of \texttt{PBlazSIM} cleared the way for modifying of the (small) codebase and including it as a part of the test-suite in this project.
 
-                The only modification done is as follows: When the simulator because of an error or reaches the end of the simulation (that is the \texttt{BREAK}) internal opcode, it prints the state of the processor to the standard output.
+                The only modification done is as follows: When the simulation ends because of an error or reaches the correct final state of the simulation (this happens once it  the \texttt{BREAK} internal opcode is processed), it prints the state of the processor to the standard output.
 
                 The output is formatted for easy parsing and usage in the attached test suite.
 
@@ -495,7 +621,7 @@ In this chapter, the technical details of the project are discussed.
 
         It's also possible to test \texttt{ZERO} and \texttt{CARRY} flags of the processor.
 
-            \subsubsection{Test file format}
+            \subsubsection{Test File Format}
 
             The \texttt{.tst} file format requires every such file to include declaration of every of the following variables:
 
@@ -518,9 +644,9 @@ In this chapter, the technical details of the project are discussed.
                 \texttt{stored\_somewhere = \{1, 002, 0x3\};}
             \end{center}
 
-            Note that the first value is in decadic system, the second one is octal and the last one hexadecimal.
+            Note that the first value is in decimal system, the second one is octal and the last one hexadecimal.
 
-        \subsection{Test cases}
+        \subsection{Test Cases}
 
             \todo{Hodi se poznamenat, ze testy presne v te podobe, kterou popisuju neexistuji, jsou tak nejak random}
             \begin{center}

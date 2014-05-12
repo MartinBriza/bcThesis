@@ -156,137 +156,137 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
     \end{tikzpicture}\end{center}
 
-        \subsection{Preprocessor}
+    \section{Preprocessor}
 
-        Preprocessor performs a simple task of removing or replacing text in the input source code according to some pre-set rules.
+    Preprocessor performs a simple task of removing or replacing text in the input source code according to some pre-set rules.
 
-        The most common task is removing comments to leave only language defined tokens for the further stages of compilation.
+    The most common task is removing comments to leave only language defined tokens for the further stages of compilation.
 
-        In the C programming language, there are preprocessor macros, too. These serve a purpose of replacing and inserting text. However, describing the entirety of the C preprocessor is a task beyond limits of this thesis, only few directives are listed, along with their simplified descriptions.
+    In the C programming language, there are preprocessor macros, too. These serve a purpose of replacing and inserting text. However, describing the entirety of the C preprocessor is a task beyond limits of this thesis, only few directives are listed, along with their simplified descriptions.
 
-        \begin{center}\begin{tabular}{r|l}
-            \verb|#include "file"| or \verb|<file>| & Behaves as if the whole contents of \verb|file| were inserted \\
-            & instead of it\\
-            \verb|#define MACRO ...| & Every occurence of \verb|NAME| in the code is replaced with \\
-            & what is substituted with \verb|...| (until the end of line)\\
-            \verb|#if cond| & The following lines until \verb|#endif| are pasted if \verb|cond| is\\
-            & met. \verb|cond| supports C expression syntax.\\
-            \verb|#ifdef MACRO| & Equivalent to \verb|#if defined(MACRO)|. True if \verb|MACRO| was\\
-            & defined.\\
-        \end{tabular}\end{center}
+    \begin{center}\begin{tabular}{r|l}
+        \verb|#include "file"| or \verb|<file>| & Behaves as if the whole contents of \verb|file| were inserted \\
+        & instead of it\\
+        \verb|#define MACRO ...| & Every occurence of \verb|NAME| in the code is replaced with \\
+        & what is substituted with \verb|...| (until the end of line)\\
+        \verb|#if cond| & The following lines until \verb|#endif| are pasted if \verb|cond| is\\
+        & met. \verb|cond| supports C expression syntax.\\
+        \verb|#ifdef MACRO| & Equivalent to \verb|#if defined(MACRO)|. True if \verb|MACRO| was\\
+        & defined.\\
+    \end{tabular}\end{center}
 
-        \subsection{Front-end}
+    \section{Front-end}
 
-            The central and most important part of the compiler, it does a whole set of operations over the source code to produce its independent representation.
+        The central and most important part of the compiler, it does a whole set of operations over the source code to produce its independent representation.
 
-            It is a language-specific part, that also checks the correctness of the input code.
+        It is a language-specific part, that also checks the correctness of the input code.
 
-            Large compiler projects even aim to its complete and clear replaceability \ref{gcc} \ref{llvm} to benefit from the optimizations in the following stages of compilation.
+        Large compiler projects even aim to its complete and clear replaceability \ref{gcc} \ref{llvm} to benefit from the optimizations in the following stages of compilation.
 
-            \begin{center}\begin{tikzpicture}
-            \tikzstyle{block} = [draw, rectangle, minimum width=10em, minimum height=2.2em]
-            \node (Program) {\emph{Source Program}};
-            \node[block,right=of Program,thick] (Lex) {Lexical Analyzer};
-            \node[block,right=of Lex,thick] (Parser) {Parser};
-            \node[block,below=of Lex,thick] (SymTab) {Symbol Table};
-            \node[block,right=of SymTab,thick] (CodeGen) {Code Generator};
-            \node[below=of CodeGen,font=\bf,thick] (IM) {\emph{Intermediate Code}};
+        \begin{center}\begin{tikzpicture}
+        \tikzstyle{block} = [draw, rectangle, minimum width=10em, minimum height=2.2em]
+        \node (Program) {\emph{Source Program}};
+        \node[block,right=of Program,thick] (Lex) {Lexical Analyzer};
+        \node[block,right=of Lex,thick] (Parser) {Parser};
+        \node[block,below=of Lex,thick] (SymTab) {Symbol Table};
+        \node[block,right=of SymTab,thick] (CodeGen) {Code Generator};
+        \node[below=of CodeGen,font=\bf,thick] (IM) {\emph{Intermediate Code}};
 
-            \draw[->,thick] (Program) -- (Lex);
-            \draw[transform canvas={yshift=0.5ex},->,thick] (Lex) -- (Parser);
-            \draw[transform canvas={yshift=-0.5ex},<-,thick] (Lex) -- (Parser);
-            \draw[transform canvas={xshift=0.5ex},->,thick] (CodeGen) -- (Parser);
-            \draw[transform canvas={xshift=-0.5ex},<-,thick] (CodeGen) -- (Parser);
-            \draw[<->,thick] (Lex) -- (SymTab);
-            \draw[<->,thick] (SymTab) -- (CodeGen);
-            \draw[->,thick] (CodeGen) -- (IM);
+        \draw[->,thick] (Program) -- (Lex);
+        \draw[transform canvas={yshift=0.5ex},->,thick] (Lex) -- (Parser);
+        \draw[transform canvas={yshift=-0.5ex},<-,thick] (Lex) -- (Parser);
+        \draw[transform canvas={xshift=0.5ex},->,thick] (CodeGen) -- (Parser);
+        \draw[transform canvas={xshift=-0.5ex},<-,thick] (CodeGen) -- (Parser);
+        \draw[<->,thick] (Lex) -- (SymTab);
+        \draw[<->,thick] (SymTab) -- (CodeGen);
+        \draw[->,thick] (CodeGen) -- (IM);
 
+        \end{tikzpicture}\end{center}
+
+        \subsection{Lexical analysis}
+
+            \emph{Lexical analyzer} comes into contact with the raw source code.
+
+            Reading the input stream character by character, it breaks it down to segments called \emph{tokens}, according to rules that are set by the language standard.
+
+            For example, there can be a token representing a \emph{keyword} (like \texttt{if} or \texttt{for}), a literal value (\texttt{42} or \verb'"string"',...) or a type or symbol name (\texttt{foo}, \texttt{main},...). 
+
+            A token of the \texttt{if} keyword will be always represented with the same string - \texttt{if}, but a variable name in C can take form of any string that matches this regular expression:
+
+            \begin{center}\texttt{[A-Za-z\_][A-Za-z\_0-9]*}\end{center}
+
+            These names and values are then stored in the \emph{symbol table}, which will be discussed next.
+
+        \subsection{Symbol Table}
+
+            A \emph{symbol table} is a container storing names of all \emph{symbols} that the \emph{lexical analyzer} has detected.
+
+            The values here are used further in the compilation, either to resolve the identity of \emph{tokens}, or to actually assign the literal values and use them in the program itself.
+
+        \subsection{Parser}
+
+            Blah
+
+            \begin{center}
+            \verb|1 * foo + 5 * bar|
+            \end{center}
+
+            Blah blah.
+
+            \begin{center}\begin{tikzpicture}[node distance=1.5cm]
+            \node (add) {+};
+            \node (mulL) [below left of=add,xshift=-33] {*};
+            \node (mulR) [below right of=add,xshift=33] {*};
+            \node (1) [below left of=mulL] {1};
+            \node (foo) [below right of=mulL] {\texttt{foo}};
+            \node (5) [below left of=mulR] {5};
+            \node (bar) [below right of=mulR] {\texttt{bar}};
+            \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
+
+            \draw (add) -- (mulL);
+            \draw (add) -- (mulR);
+            \draw (mulL) -- (1);
+            \draw (mulL) -- (foo);
+            \draw (mulR) -- (5);
+            \draw (mulR) -- (bar);
             \end{tikzpicture}\end{center}
 
-            \subsubsection{Lexical analysis}
+            Blah blah blah. Blah blah!
 
-                \emph{Lexical analyzer} comes into contact with the raw source code.
+            \begin{center}\begin{tikzpicture}[node distance=1.5cm]
+            \node (add) {+};
+            \node (mulL) [below left of=add,xshift=-33] {*};
+            \node (mulR) [below right of=add,xshift=33] {*};
+            \node (1) [below left of=mulL] {\texttt{\textless int\textgreater} 1};
+            \node (foo) [below right of=mulL] {\texttt{\textless float\textgreater foo}};
+            \node (5) [below left of=mulR] {\texttt{\textless int\textgreater} 5};
+            \node (bar) [below right of=mulR] {\texttt{\textless int\textgreater bar}};
+            \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
 
-                Reading the input stream character by character, it breaks it down to segments called \emph{tokens}, according to rules that are set by the language standard.
+            \draw (add) -- (mulL);
+            \draw (add) -- (mulR);
+            \draw (mulL) -- (1);
+            \draw (mulL) -- (foo);
+            \draw (mulR) -- (5);
+            \draw (mulR) -- (bar);
+            \end{tikzpicture}\end{center}
 
-                For example, there can be a token representing a \emph{keyword} (like \texttt{if} or \texttt{for}), a literal value (\texttt{42} or \verb'"string"',...) or a type or symbol name (\texttt{foo}, \texttt{main},...). 
+            BLAH! BLAAAAH! BLAAAAAAAAAERGGHHHHHHHHHHH!!!1!!
 
-                A token of the \texttt{if} keyword will be always represented with the same string - \texttt{if}, but a variable name in C can take form of any string that matches this regular expression:
-
-                \begin{center}\texttt{[A-Za-z\_][A-Za-z\_0-9]*}\end{center}
-
-                These names and values are then stored in the \emph{symbol table}, which will be discussed next.
-
-            \subsubsection{Symbol Table}
-
-                A \emph{symbol table} is a container storing names of all \emph{symbols} that the \emph{lexical analyzer} has detected.
-
-                The values here are used further in the compilation, either to resolve the identity of \emph{tokens}, or to actually assign the literal values and use them in the program itself.
-
-            \subsubsection{Parser}
-
-                Blah
-
-                \begin{center}
-                \verb|1 * foo + 5 * bar|
-                \end{center}
-
-                Blah blah.
-
-                \begin{center}\begin{tikzpicture}[node distance=1.5cm]
-                \node (add) {+};
-                \node (mulL) [below left of=add,xshift=-33] {*};
-                \node (mulR) [below right of=add,xshift=33] {*};
-                \node (1) [below left of=mulL] {1};
-                \node (foo) [below right of=mulL] {\texttt{foo}};
-                \node (5) [below left of=mulR] {5};
-                \node (bar) [below right of=mulR] {\texttt{bar}};
-                \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
-
-                \draw (add) -- (mulL);
-                \draw (add) -- (mulR);
-                \draw (mulL) -- (1);
-                \draw (mulL) -- (foo);
-                \draw (mulR) -- (5);
-                \draw (mulR) -- (bar);
-                \end{tikzpicture}\end{center}
-
-                Blah blah blah. Blah blah!
-
-                \begin{center}\begin{tikzpicture}[node distance=1.5cm]
-                \node (add) {+};
-                \node (mulL) [below left of=add,xshift=-33] {*};
-                \node (mulR) [below right of=add,xshift=33] {*};
-                \node (1) [below left of=mulL] {\texttt{\textless int\textgreater} 1};
-                \node (foo) [below right of=mulL] {\texttt{\textless float\textgreater foo}};
-                \node (5) [below left of=mulR] {\texttt{\textless int\textgreater} 5};
-                \node (bar) [below right of=mulR] {\texttt{\textless int\textgreater bar}};
-                \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
-
-                \draw (add) -- (mulL);
-                \draw (add) -- (mulR);
-                \draw (mulL) -- (1);
-                \draw (mulL) -- (foo);
-                \draw (mulR) -- (5);
-                \draw (mulR) -- (bar);
-                \end{tikzpicture}\end{center}
-
-                BLAH! BLAAAAH! BLAAAAAAAAAERGGHHHHHHHHHHH!!!1!!
-
-            \subsubsection{Code Generator}
+        \subsection{Code Generator}
 
 
-        \subsection{Intermediate Code}
+    \section{Intermediate Code}
 
-            \subsubsection{The Intermediate Code Optimizer}
+        \subsection{The Intermediate Code Optimizer}
 
-                Being input the intermediate code, it makes it smaller and/or more efficient, regardless of the target architecture.
+            Being input the intermediate code, it makes it smaller and/or more efficient, regardless of the target architecture.
 
-        \subsection{Back\-end}
+    \section{Back\-end}
 
-            The input in this case is the intermediate language, too. The back-end then takes it and transofrms it to the target assembly or directly the binary form for the target processor architecture.
+        The input in this case is the intermediate language, too. The back-end then takes it and transofrms it to the target assembly or directly the binary form for the target processor architecture.
 
-            Architecture-dependent optimizations can take place in this phase.
+        Architecture-dependent optimizations can take place in this phase.
 
 \chapter{Compiler Choice}\label{compiler}
 

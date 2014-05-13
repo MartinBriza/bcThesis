@@ -285,6 +285,8 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             The \emph{parser} feeds the completed subtrees and their nodes into the code generator that flattens the structure into a series of instructions, similar to the assembly language of a computer processor.
 
+            Only one kind of resemblance of the previous code will be left - the links in code branches for both conditional and unconditional jumps - this is required to make creating the links in the resulting code easier.
+
     \section{Intermediate Code}
 
             As mentioned in the previous section, the intermediate code resembles assembly. The difference between the two is still quite big though. Intermediate code contains a lot more information, like variable names, 
@@ -310,11 +312,26 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \verb|add     temp1,  temp2|\\
             \end{tabular}\end{center}
 
-            Most compilers use \emph{three address code} as their intermediate language. This puts them close to many processor architectures, such as \emph{ARM}, that uses a form of \emph{three address code} as its assembly language. In contrary, other architectures, like \emph{x86}, or, \emph{PicoBlaze}, use only two operands in their assembly.
+            Most compilers use \emph{three address code} as their intermediate language. This puts them close to some processor architectures, such as \emph{ARM}, that uses a form of \emph{three address code} as its assembly language. In contrary, other architectures, like \emph{x86}, or, \emph{PicoBlaze}, that this thesis targets, use only two operands in their assembly.
 
         \subsection{The Intermediate Code Optimizer}
 
-            Being input the intermediate code, it makes it smaller and/or more efficient, regardless of the target architecture.
+            Optimizing the code during the compilation is not absolutely vital for the whole process. However, it's a welcome part, especially by the end-users of the tool.
+
+            The optimizer looks for patterns that can be reordered, changed for their faster equivalents or completely removed, while maintaining the same functionality as before.
+
+            To demonstrate on the \texttt{three address code} from before, consider this instruction:
+
+            \begin{center}\verb|mul    temp1,       1,     foo|\end{center}
+
+            Multiplying anything with \emph{1} is completely redundant in this case. After removing the unnecessary operation and changing the order to preserve the same result, the example would look like this:
+
+            \begin{center}\begin{tabular}{l}
+            \verb|mul    temp1,       5,     bar|\\
+            \verb|add    temp1,   temp1,     foo|\\
+            \end{tabular}\end{center}
+
+            One whole instruction was saved in this case. There are many more techniques that can be applied on any amount of code. One of the simplest ones is \emph{dead code} and \emph{dead variable detection}. When a variable is not used or a conditional branch cannot be entered at any time when the program will be executed, the optimizer can completely remove it.
 
     \section{Back\-end}
 
@@ -734,13 +751,16 @@ In this chapter, the technical details of the project are discussed.
             Then, assuming the variable was not loaded in the registers beforehand and the other variables were already used (\texttt{foo} is in \texttt{s0} and \texttt{s1} and \texttt{bar} is in \texttt{s2} and \texttt{s3}), the resulting assembly will take the following form:
 
             \begin{center}
-\begin{verbatim}load    s4,     s0              ; iTemp0[0]=foo[0]
-load    s5,     s1              ; iTemp0[1]=foo[0]
-add     s4,     0x2a            ; iTemp0[0]+=(value)
-                                ; iTemp1=iTemp0
-sub     s4,     s2              ; iTemp1[0]-=bar[0]
-subcy   s5,     s3              ; iTemp1[1]-=bar[1]
-                                ; baz=iTemp1\end{verbatim}\end{center}
+            \begin{verbatim}
+            load    s4,     s0              ; iTemp0[0]=foo[0]
+            load    s5,     s1              ; iTemp0[1]=foo[0]
+            add     s4,     0x2a            ; iTemp0[0]+=(value)
+                                            ; iTemp1=iTemp0
+            sub     s4,     s2              ; iTemp1[0]-=bar[0]
+            subcy   s5,     s3              ; iTemp1[1]-=bar[1]
+                                            ; baz=iTemp1
+            \end{verbatim}
+            \end{center}
 
             Each byte in the operation is covered with the regular C-style array notation.
 

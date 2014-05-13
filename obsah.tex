@@ -123,7 +123,7 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
 \chapter{Programming language compiler}
 
-Most of the modern computer processors are programmed using a fairly complicated binary instruction set. To make writing more complex and powerful applications, we are now using programming languages that are translated (\emph{compiled}) into the low level binary form easily understood by the processor.
+Most of the modern computer processors are programmed using a fairly complicated binary instruction set. To make writing more complex and powerful applications more pleasant and comprehensible, we are now using programming languages that are translated (\emph{compiled}) into the low level binary form easily understood by the processor.
 
 In this chapter, the most vital parts and terms in construction of a compiler are discussed, with focus on C language.
 
@@ -225,22 +225,26 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
         \subsection{Parser}
 
-            Blah
+            Parser then takes the stream of tokens and arranges them into a tree-like structure. This process is called \emph{syntactic analysis}. It consists not only of arranging the tree but as a side-effect, correct \emph{syntax} of the input code is being checked.
+
+            Consider the following expression for demonstration of processes taking place in the \emph{parser}:
 
             \begin{center}
             \verb|1 * foo + 5 * bar|
             \end{center}
 
-            Blah blah.
+            The tree, as a result of the \emph{syntactic analysis}, would take the form represented in the next diagram.
+
+            Note the operator precedence is honored in the same way as in regular mathematical expressions.
 
             \begin{center}\begin{tikzpicture}[node distance=1.5cm]
             \node (add) {+};
             \node (mulL) [below left of=add,xshift=-33] {*};
             \node (mulR) [below right of=add,xshift=33] {*};
-            \node (1) [below left of=mulL] {1};
-            \node (foo) [below right of=mulL] {\texttt{foo}};
-            \node (5) [below left of=mulR] {5};
-            \node (bar) [below right of=mulR] {\texttt{bar}};
+            \node (1) [below left of=mulL] {\emph{value}(1)};
+            \node (foo) [below right of=mulL] {\emph{identifier}(\texttt{foo})};
+            \node (5) [below left of=mulR] {\emph{value}(5)};
+            \node (bar) [below right of=mulR] {\emph{identifier}(\texttt{bar})};
             \coordinate (mulM) at ($(mulL)!0.5!(mulR)$);
 
             \draw (add) -- (mulL);
@@ -251,7 +255,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \draw (mulR) -- (bar);
             \end{tikzpicture}\end{center}
 
-            Blah blah blah. Blah blah!
+            There is also other information about the \emph{tokens} in this expression, like types in case of variables. It's necessary to check if they are used in the right context, like if functions are used like functions and not variables or if defined operations are being used upon them.
 
             \begin{center}\begin{tikzpicture}[node distance=1.5cm]
             \node (add) {+};
@@ -271,12 +275,42 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \draw (mulR) -- (bar);
             \end{tikzpicture}\end{center}
 
-            BLAH! BLAAAAH! BLAAAAAAAAAERGGHHHHHHHHHHH!!!1!!
+            If \texttt{foo} was not a \texttt{float}, but for example a \texttt{bool} variable, the \emph{semantic analysis} of the expression would fail because the operation of multiplication is not be defined between these two types.
+
+            The result types of expressions, are deduced as well. In this case, in C language, the whole expression's result would take form of a \texttt{float}.
 
         \subsection{Code Generator}
 
+            While the trees are being constructed and checked, the intermediate code is created as well.
+
+            The \emph{parser} feeds the completed subtrees and their nodes into the code generator that flattens the structure into a series of instructions, similar to the assembly language of a computer processor.
 
     \section{Intermediate Code}
+
+            As mentioned in the previous section, the intermediate code resembles assembly. The difference between the two is still quite big though. Intermediate code contains a lot more information, like variable names, 
+            Intermediate code contains a lot more information than assembly, like variable names, which are useless in further stages of compilation.
+
+            Popular form of such output is called \emph{three address code}. Every instruction in this simple language takes a maximum of three operands, first marks where the result will be stored and the other to are the source operands.
+
+            The previously used expression \texttt{1 * foo + 5 * bar} will be transformed to the following (simplified) series of instructions in three address code:\\
+
+            \begin{center}\begin{tabular}{l}
+            \verb|mul    temp1,       1,     foo|\\
+            \verb|mul    temp2,       5,     bar|\\
+            \verb|add    temp1,   temp1,   temp2|\\
+            \end{tabular}\end{center}
+
+            The instructions in the code can be limited to take only two operands, too, the first being the result storage and the first argument both. This code is equivalent to the previous one:
+
+            \begin{center}\begin{tabular}{l}
+            \verb|assign  temp1,      1|\\
+            \verb|mul     temp1,    foo|\\
+            \verb|assign  temp2,      5|\\
+            \verb|mul     temp2,    bar|\\
+            \verb|add     temp1,  temp2|\\
+            \end{tabular}\end{center}
+
+            Most compilers use \emph{three address code} as their intermediate language. This puts them close to many processor architectures, such as \emph{ARM}, that uses a form of \emph{three address code} as its assembly language. In contrary, other architectures, like \emph{x86}, or, \emph{PicoBlaze}, use only two operands in their assembly.
 
         \subsection{The Intermediate Code Optimizer}
 
@@ -286,7 +320,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
         The input in this case is the intermediate language, too. The back-end then takes it and transofrms it to the target assembly or directly the binary form for the target processor architecture.
 
-        Architecture-dependent optimizations can take place in this phase.
+        Architecture-dependent optimization can take place in this phase.
 
 \chapter{Compiler Choice}\label{compiler}
 

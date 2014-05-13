@@ -23,15 +23,47 @@ Subject of this thesis project is constructing a C programming language compiler
 
 \chapter{The PicoBlaze Processor}\label{processor}
 
-Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-programmable gate array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This of course means the processor is not meant to be physically manufactured, yet it would be possible.
+Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-programmable gate array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This means the processor is not meant to be physically manufactured, yet it would be possible.
 
-Historically, the name of the design was \texttt{KCPSM}, for \emph{Ken Chapman's Programmable State Machine} and then \emph{Constant Coded Programmable State Machine}. This term is now still used in the FPGA design - the components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
+    \section{History}
 
-The fact the processor is soft-core only makes shipping bug fix and feature updates possible to the users of the current version. The most up to date release of the current version is the 8th one, published on March 31, 2014.\todo{release7: http://forums.xilinx.com/t5/PicoBlaze/Release-7-of-KCPSM6-What-s-New/m-p/385325 na webu ale visi uz 8}.
+    Historically, the name of the design was \texttt{KCPSM}, for \emph{Ken Chapman's Programmable State Machine} and then \emph{Constant Coded Programmable State Machine}. This term is now still used in the FPGA design - the components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
 
-The previous version, PicoBlaze-3, had its last 7th revision released in October 2003. \todo{citace nebo aspon link na forum}
+        \subsection{PicoBlaze}
 
-    \section{Main Features}
+        The first version of \emph{PicoBlaze} was released in May 1999.
+
+        The initial \emph{PicoBlaze} was very simple, especially compared to the current one. There was only space for 256 instructions in the program memory and there was no RAM. Only 16 8-bit registers were available to be used for storage. However, it's possible to connect an external memory through the 256 I/O pins.
+
+        The multi-byte instructions for arithmetic (\texttt{ADDCY} and \texttt{SUBCY}) were included since the very beginning.
+
+        There was no dedicated instruction for comparing values, but both the \emph{zero} and \emph{carry} flags were present.
+
+        \subsection{PicoBlaze-2}
+
+        The second version of the processor was initially released on 17th December 2002.
+
+        The program could consist of 1024 instructions at most and there was no scratchpad memory for runtime variables. The instructions were able to operate only with the 32 8-bit registers and constant values.
+
+        No changes were done to the instruction set from \emph{PicoBlaze}.
+
+        \subsection{PicoBlaze-3}
+
+        First release of the previous version, 3, of \emph{PicoBlaze} was released on 20th May 2004. Its last revision, 7, was released in October 2003.
+
+        The register count was reduced to 16 while their size has been kept the same. The main addition in this version is the 64 byte large scratchpad memory, that eliminates the need of an external memory connected through the I/O ports.
+
+        Instruction set changes in this version include the addition of comparison, testing and parity counting instructions.
+
+        \subsection{PicoBlaze-6}
+
+        The \emph{PicoBlaze-6} was initially released on 28th October 2010. Since then, a total of 7 newer revisions of this versions were released.
+
+        The most recent one, \emph{PicoBlaze-6 release 8}, was released on 31th March 2014.
+
+        The differences and new features compared to \emph{PicoBlaze-3} are discussed in \ref{kcpsm6cmp}. The main features, regardless of history, are listed in \ref{mainfeatures}
+
+    \section{Main Features}\label{mainfeatures}
 
     \emph{PicoBlaze} is a RISC\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles.
 
@@ -43,12 +75,12 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
         2 Register banks & Containing 16 8-bit registers each\\
 
-        Output & 256 8-bit ports \\
+        Input/Output & 256 8-bit ports \\
 
-        8-bit ALU & Supports shifting, adding and subtracting \\
-                  & Provides AND, OR and XOR operations \\
-                  & Compares and tests \\
-                  & Implements carry and zero flags \\
+        8-bit Arithmetic-Logic Unit & Supports shifting, adding and subtracting \\
+                                    & Provides AND, OR and XOR operations \\
+                                    & Compares and tests \\
+                                    & Implements carry and zero flags \\
 
         FPGA design & Can be included directly in the VHDL code \\
                     & No other equipment or code needed \\
@@ -61,13 +93,13 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
     \todo{Pripadne nejake linky na pripady/priklady uziti atp}
 
-    \section{New features and properties of PicoBlaze-6}
+    \section{New features and properties of PicoBlaze-6}\label{kcpsm6cmp}
 
     Compared to the previous version, there were major changes in PicoBlaze's design after the upgrade to the sixth version, which is still backwards-compatible.
 
     The most important ones are covered in this section in descending order according to their impact on programming in C and the compiler itself.
 
-        \subsection{New \texttt{JUMP@} and \texttt{CALL@} Instructions}\label{jumpat}
+        \subsubsection{New \texttt{JUMP@} and \texttt{CALL@} Instructions}\label{jumpat}
 
         Indirect jumps and calls, provided the address of the function or label, are possible in the new version.
 
@@ -75,41 +107,41 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
         It also means there had to a new addressing mode introduced - the whole program memory cannot be covered with only an 8-bit value, so the code's section is stored in the lower four bytes of the first register and the rest of the address in the second one.
 
-        \subsection{New \texttt{REGBANK} and \texttt{STAR} Instructions}
+        \subsubsection{New \texttt{REGBANK} and \texttt{STAR} Instructions}
 
         The new version of the processor now provides two sets of 16 general purpose registers that are switchable using the \texttt{REGBANK} instruction - this means only one of the sets can be accessed at a time.
 
         To store values in the inactive bank, the \texttt{STAR} instruction is provided - it is used to store a value from the active bank register in another register that is in the inactive bank.
 
-        \subsection{\texttt{ADDCY} and \texttt{SUBCY} Instruction Changes}
+        \subsubsection{\texttt{ADDCY} and \texttt{SUBCY} Instruction Changes}
 
         The previous version of these instructions modified the zero flag only according to their own result. Now they add the previous zero to the current one.
 
-        \subsection{New \texttt{COMPARECY} and \texttt{TESTCY} Instructions}
+        \subsubsection{New \texttt{COMPARECY} and \texttt{TESTCY} Instructions}
 
         Instructions added to make comparing multi-byte types easier. They store the flags (carry and zero) and propagate them according to the progress through the single bytes.
 
-        \subsection{Program Memory Changes}
+        \subsubsection{Program Memory Changes}
 
         Due to the two newly added memory addressing pins, it is possible to address four times more program memory (now up to 4K), increasing the possible program size and complexity.
 
-        \subsection{RAM Changes}
+        \subsubsection{RAM Changes}
 
         The amount of RAM addressable by the program was increased to up to 256 bytes from 64, yet it depends on the target device the processor will be implemented on. 
 
         This was achieved by modifying the opcodes of instructions of the processor, not the internals.
 
-        \subsection{Call stack}
+        \subsubsection{Call stack}
 
         Only 30 levels of function call depth are now available compared to 31 of KCPSM3.
 
-        \subsection{New \texttt{LOAD\&RETURN} Instruction and \texttt{STRING} Directive}
+        \subsubsection{New \texttt{LOAD\&RETURN} Instruction and \texttt{STRING} Directive}
 
         The user (or compiler) can now specify a byte string location in the memory using the \texttt{STRING} directive in the assembly.
 
         Then, using the \texttt{LOAD\&RETURN} instruction, it is possible to load a constant value into a specified register and unconditionally return from a subroutine, making these very useful in conjunction to generate text strings to be presented to the user.
 
-        \subsection{New \texttt{OUTPUTK} Instruction}
+        \subsubsection{New \texttt{OUTPUTK} Instruction}
 
         This instruction allows the program to output a constant instead of loading it into a register and outputting it using the regular \texttt{OUTPUT}.
 
@@ -120,6 +152,55 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
     Its main devise is the possibility to use it with hardware not provided by Xilinx and modifiability and configurability. Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use the smallest required subset - reducing field usage possibly.
 
     The latest version is 2.2 that was released in the year 2007 so it cannot possibly implement the new instructions of PicoBlaze-6 which this project tries to use as much as possible.
+
+    \section{PicoBlaze Assemblers}
+
+        \subsection{pBlazASM}\label{pblazasm}
+
+        PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the simulator \ref{pblazsim}.
+
+        However, the program itself is bug infested and crashes quite often. There were some trivial bugs that were possible to be fixed quickly, such as calling \texttt{free()} on a pointer that was not returned by \texttt{malloc()}).
+
+    \section{PicoBlaze Simulators}
+
+        \subsection{pBlazSIM}\label{pblazsim}
+
+        As the debugging capabilities of the processor are limited and running the programs on real hardware would be too complicated, possibility of usage a simulator of the target processor is more than welcome.
+
+        One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is written in C++ and Qt, so its usage is not limited only to the Windows platform which is the only one Mediatronix distributes the binary form to.
+
+            \subsubsection{Running Under Linux}
+
+            First attempts to run the simulator in \emph{Wine}\footnote{WINE is not an Emulator - an open source Windows API implementation} were quite unsuccessful as it was capable of simulation only the code which was included in the distributed binary package.
+
+            \todo{Citace/linky}
+            However, the application itself is hosted under the GPLv2 open source license in the Google Code repository. 
+
+            It is impossible to compile it directly from the source provided (at least at the time of writing of the thesis). The needed steps to finish the compilation successfully are fixing the \texttt{qmake} project file to include all needed source files and adding one missing icon for the GUI (for example by copying the existing ones in different colors).
+
+            The hand-compiled version is capable of running the assembly files generated by \ref{pblazasm} well, including all features of its graphical user interface.
+
+            I contacted the upstream developer responsible for the changes that introduced the invalid constructions to fix them. By the time I'm writing this thesis, the code is already fine.
+
+            \subsubsection{Command Line Simulator}
+
+            Recently a simple simulator without any user interface was introduced to the code-base. The officially provided build system information does not handle its compilation but due to the relative simplicity of the project, it is easy to compile this executable by hand by using the object files of the pBlaze.cpp module.
+
+            The simplest way possible (provided you use a C++ compiler that is able to link directly) to compile this binary is by using the following command:
+
+            \begin{center}
+                \texttt{\$\{CPP\} pBlaze.cpp pBlazSIMcl.cpp -o \$\{SIM\_BINARY\}}
+            \end{center}
+
+        \subsection{PBSim}\label{pbsim}
+
+        \todo{Malo informaci, nakonec ho stejne nepouzivam... asi dat pryc uplne}
+
+        A project that is being developed on the University, started as a Master's project in year 2012.
+
+        Bound to \emph{SDCC}.
+
+        Tightly related to Eclipse, it is possible to use it as a part of the user interface.
 
 \chapter{Programming language compiler}
 
@@ -348,7 +429,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
         Writing a compiler \emph{back-end} is the goal of this thesis.
 
-\chapter{Compiler Choice}\label{compiler}
+\chapter{Compiler Front-End Choice}\label{compiler}
 
 As starting a new compiler from scratch would not be possible in the limited time frame of a bachelor's thesis, I had to choose an existing front-end and provide a corresponding back-end part for the target platform.
 
@@ -489,180 +570,47 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     This means I wrote the whole program again while using just a few parts from the original code.
 
-
-\chapter{New Port Creation}\label{port}
-
-SDCC is basically a framework for compiler creation, providing useful tools that make compiling for the programmer's platform easier.
-
-The architecture of SDCC is based upon the so called \emph{ports}, units containing code related only to one target platform. These can be divided even further to provide more flexibility regarding different types of processors.
-
-    \section{Adding a New Port}
-
-    As this process is not documented anywhere in the SDCC documentation and doing it properly would require deep and good understanding of the GNU autotools toolchain, the following procedure was used to add the new port to the SDCC source:
-
-    \begin{enumerate}
-
-    \item Create a port source directory in \texttt{src/}, in this case, I was calling it \texttt{pblaze}.
-
-    \item Add the basic source files in the port directory, for example \texttt{main.c} and \texttt{main.h}. \texttt{main.c} has to contain an instance of \texttt{PORT} structure containing information about the port's specifications and pointers to functions that will be called during the compilation.
-
-    \item Insert a new (unique) port ID into \texttt{src/port.h}, like this for example:
-
-    \texttt{\#define TARGET\_ID\_PBLAZE    16}
-
-    \item And create an \texttt{extern} reference to the \texttt{PORT} instance from \texttt{src/pblaze/main.c}, for example:
-
-\begin{verbatim}#if !OPT_DISABLE_PBLAZE
-extern PORT pblaze_port;
-#endif\end{verbatim}
-
-    \item In \texttt{src/SDCCmain.c}, insert a reference to the structure defined in \texttt{src/pblaze/main.c}.
-
-    \end{enumerate}
-
-        \subsection{Automation of new port addition}
-
-        These tasks are automated in the included \texttt{glue.sh} script. When it is executed in  Bash\footnote{Bourne Again Shell, http://www.gnu.org/software/bash/} with the \texttt{SDCC\_HOME} environment variable set to point to the directory with both PBCC and SDCC source code, it completes all the necessary tasks.
-
-    \section{Compilation}
-
-    After the port was added, SDCC can be compiled. The steps to achieve successful compilation are:
-
-    \begin{enumerate}
-    \item \texttt{autoconf} creates a \texttt{configure} script to configure the components and compiler options of the final binary
-    \item \texttt{./configure} is a script that compiles a Makefile for the compilation itself. It is possible, for example, to modify the optimization of the compiler binary or disable compilation of \emph{ports} of architectures we will not need.
-    \item \texttt{make} is the compilation script itself. You can speed the whole process by using the \texttt{-jX} argument specifying that \texttt{X} compiler processes should run at the same time.
-    \end{enumerate}
-
-    \section{Tools Used}
-
-        \subsection{pBlazASM}\label{pblazasm}
-
-        PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the simulator \ref{pblazsim}.
-
-        However, the program itself is bug infested and crashes quite often. There were some trivial bugs that were possible to be fixed quickly, such as calling \texttt{free()} on a pointer that was not returned by \texttt{malloc()}).
-
-        \subsection{pBlazSIM}\label{pblazsim}
-
-        As the debugging capabilities of the processor are limited and running the programs on real hardware would be too complicated, possibility of usage a simulator of the target processor is more than welcome.
-
-        One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is written in C++ and Qt, so its usage is not limited only to the Windows platform which is the only one Mediatronix distributes the binary form to.
-
-            \subsubsection{Running Under Linux}
-
-            First attempts to run the simulator in \emph{Wine}\footnote{WINE is not an Emulator - an open source Windows API implementation} were quite unsuccessful as it was capable of simulation only the code which was included in the distributed binary package.
-
-            \todo{Citace/linky}
-            However, the application itself is hosted under the GPLv2 open source license in the Google Code repository. 
-
-            It is impossible to compile it directly from the source provided (at least at the time of writing of the thesis). The needed steps to finish the compilation successfully are fixing the \texttt{qmake} project file to include all needed source files and adding one missing icon for the GUI (for example by copying the existing ones in different colors).
-
-            The hand-compiled version is capable of running the assembly files generated by \ref{pblazasm} well, including all features of its graphical user interface.
-
-            I contacted the upstream developer responsible for the changes that introduced the invalid constructions to fix them. By the time I'm writing this thesis, the code is already fine.
-
-            \subsubsection{Command Line Simulator}
-
-            Recently a simple simulator without any user interface was introduced to the code-base. The officially provided build system information does not handle its compilation but due to the relative simplicity of the project, it is easy to compile this executable by hand by using the object files of the pBlaze.cpp module.
-
-            The simplest way possible (provided you use a C++ compiler that is able to link directly) to compile this binary is by using the following command:
-
-            \begin{center}
-                \texttt{\$\{CPP\} pBlaze.cpp pBlazSIMcl.cpp -o \$\{SIM\_BINARY\}}
-            \end{center}
-
-        \subsection{PBSim}\label{pbsim}
-
-        \todo{Malo informaci, nakonec ho stejne nepouzivam... asi dat pryc uplne}
-
-        A project that is being developed on the University, started as a Master's project in year 2012.
-
-        Bound to \emph{SDCC}.
-
-        Tightly related to Eclipse, it is possible to use it as a part of the user interface.
-
-        \subsection{git}\label{git}
-
-        Git is a Distributed Revision Control System allowing the user to create snapshots (\emph{commits}) of the source code and store them in remote repositories.
-
-        It focuses on speed and team development. 
-
-        The whole project is hosted under the GPLv2 license on Github\footnote{https://github.com/krivka/pbccv3}.
-
-        
-
-
 \chapter{Implementation Design}\label{design}
 
 In this chapter, the technical details of the project are discussed.
 
-    \todo{Pravdepodobne vetsina veci moc do hloubky, prehodnotit prepsani na mene implementacni, vice abstrakce}
+    \section{New Port Addition}
 
-    \section{Base Layer}
+        As this process is not documented anywhere in the SDCC documentation and doing it properly would require deep and good understanding of the GNU autotools toolchain, the following procedure was used to add the new port to the SDCC source:
 
-    Using pure C library calls and macros in a C++ project would be wasting potential of the language, that's why the project is building upon a wrapper library for the \emph{SDCC} internals instead of them directly.
+        \begin{enumerate}
 
-    The whole wrapper library is included in the \texttt{wrap.h} and \texttt{wrap.cc} files.
+        \item Create a port source directory in \texttt{src/}, in this case, I was calling it \texttt{pblaze}.
 
-        \subsection{Approach}
+        \item Add the basic source files in the port directory, for example \texttt{main.c} and \texttt{main.h}. \texttt{main.c} has to contain an instance of \texttt{PORT} structure containing information about the port's specifications and pointers to functions that will be called during the compilation.
 
-        Every needed \emph{SDCC} structure is wrapped in its own class adding new methods.
+        \item Insert a new (unique) port ID into \texttt{src/port.h}, like this for example:
 
-        The C++ classes are inheriting the structures themselves (to provide ability to up-cast directly).
+        \texttt{\#define TARGET\_ID\_PBLAZE    16}
 
-        No other member variables are added, the memory footprint is the same. Actually, the pointers between the classes and their parent structures can be converted safely in both ways. This is not encouraged though as there is no support for this operation implicitly in the language standard.
+        \item And create an \texttt{extern} reference to the \texttt{PORT} instance from \texttt{src/pblaze/main.c}, for example:
 
-        \subsection{Solution}
+            \begin{verbatim}#if !OPT_DISABLE_PBLAZE
+            extern PORT pblaze_port;
+            #endif\end{verbatim}
 
-        Most of the code is generated using regular expressions, then modified by hand to provide the required functionality.
+        \item In \texttt{src/SDCCmain.c}, insert a reference to the structure defined in \texttt{src/pblaze/main.c}.
 
-        The methods added to the classes are usually just wrapping the functions and macros from \emph{SDCC}.
+        \end{enumerate}
 
-        There were some, unfortunately, that required being copied over to the code due to higher type safety of C++ when compared to C. This is the case of \texttt{bool ICode::skipNoOp()} method for example.
+            \subsection{Automation of new port addition}
 
-    \section{Utility Classes}
+            These tasks are automated in the included \texttt{glue.sh} script. When it is executed in  Bash\footnote{Bourne Again Shell, http://www.gnu.org/software/bash/} with the \texttt{SDCC\_HOME} environment variable set to point to the directory with both PBCC and SDCC source code, it completes all the necessary tasks.
 
-    To provide better readable code and easier debugging, there are some classes provided.
+        \section{Compilation}
 
-    Everything covered here can be found in the \texttt{util.h} and \texttt{util.cc} files.
+        After the port was added, SDCC can be compiled. The steps to achieve successful compilation are:
 
-        \subsection{Emitter}\label{emitter}
-
-        Working in a similar fashion to the streams in the \emph{C++ STL} library, this class implements the final assembly output.
-
-        The single global instance of this class is initialized on start-up, configuring the output file and output format to hide these details from the generating code itself.
-
-        Streaming (or left shift) operators are overloaded to make the instruction emitting stand out from the code.
-
-        Many instructions have different forms for single- and multi- byte variables used as their operands. For this purpose, the class also provides an iterator variable, declared as \texttt{static public int i}.
-
-    \section{Instruction Generator}
-
-    \texttt{gen.h} and \texttt{gen.cc}
-
-    To avoid code duplication as much as possible, every instruction is generated using cycles wrapping the \texttt{Emitter}\ref{emitter} class.
-
-    This helps code clarity in the \texttt{ICode} processing functions themselves, limiting it to pure logic of handling the needed information.
-
-    \section{Variable Storage}
-
-    All the included sections are named after the classes in the source code to provide a comprehensible description of their purpose.
-
-    \texttt{ralloc.h} and \texttt{ralloc.cc}
-
-        \subsection{Allocator}
-
-        Singleton class used as an entrance to the generator itself.
-
-        \subsection{Byte Subclasses - MemoryCell and Register}
-
-        \subsection{Bank}
-
-        Two instances of this class are present in the compiler, corresponds to each register bank contained in the processor.
-
-        It collects all 16 registers and manages their allocation for variables and handles their clearing or moving to memory.
-
-        \subsection{Memory}
+        \begin{enumerate}
+        \item \texttt{autoconf} creates a \texttt{configure} script to configure the components and compiler options of the final binary
+        \item \texttt{./configure} is a script that compiles a Makefile for the compilation itself. It is possible, for example, to modify the optimization of the compiler binary or disable compilation of \emph{ports} of architectures we will not need.
+        \item \texttt{make} is the compilation script itself. You can speed the whole process by using the \texttt{-jX} argument specifying that \texttt{X} compiler processes should run at the same time.
+        \end{enumerate}
 
     \section{Compiled Assembly Properties}
 

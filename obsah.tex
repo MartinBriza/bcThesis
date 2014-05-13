@@ -123,7 +123,7 @@ The previous version, PicoBlaze-3, had its last 7th revision released in October
 
 \chapter{Programming language compiler}
 
-Most of the modern computer processors are programmed using a fairly complicated binary instruction set. To make writing more complex and powerful applications more pleasant and comprehensible, we are now using programming languages that are translated (\emph{compiled}) into the low level binary form easily understood by the processor.
+Most of the modern computer processors are programmed using a fairly complicated binary instruction set. To make writing more complex and powerful applications more pleasant and comprehensible, we are now using programming languages that are translated (\emph{compiled}) into the low level binary form executable by the processor.
 
 In this chapter, the most vital parts and terms in construction of a compiler are discussed, with focus on C language.
 
@@ -287,14 +287,19 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             Only one kind of resemblance of the previous code will be left - the links in code branches for both conditional and unconditional jumps - this is required to make creating the links in the resulting code easier.
 
+            In case the compiler does not use any kind of intermediate code, directly the target language is being emitted in this section, making the code generator serve the purpose of a \emph{back-end}, too.
+
     \section{Intermediate Code}
 
-            As mentioned in the previous section, the intermediate code resembles assembly. The difference between the two is still quite big though. Intermediate code contains a lot more information, like variable names, 
-            Intermediate code contains a lot more information than assembly, like variable names, which are useless in further stages of compilation.
+            As mentioned in the previous section, the intermediate code resembles assembly. The difference between the two is still quite big though. Intermediate code contains a lot more information, like variable names, information about liveness of the variables, type information and much more.
 
             Popular form of such output is called \emph{three address code}. Every instruction in this simple language takes a maximum of three operands, first marks where the result will be stored and the other to are the source operands.
 
-            The previously used expression \texttt{1 * foo + 5 * bar} will be transformed to the following (simplified) series of instructions in three address code:\\
+            Consider the example we already used:
+
+            \begin{center}\texttt{1 * foo + 5 * bar}\end{center}
+
+            The expression will be transformed to the following (simplified) series of instructions in three address code:
 
             \begin{center}\begin{tabular}{l}
             \verb|mul    temp1,       1,     foo|\\
@@ -333,11 +338,15 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             One whole instruction was saved in this case. There are many more techniques that can be applied on any amount of code. One of the simplest ones is \emph{dead code} and \emph{dead variable detection}. When a variable is not used or a conditional branch cannot be entered at any time when the program will be executed, the optimizer can completely remove it.
 
-    \section{Back\-end}
+    \section{Back-end}
 
-        The input in this case is the intermediate language, too. The back-end then takes it and transofrms it to the target assembly or directly the binary form for the target processor architecture.
+        The target specific part of the compiler, generating the sought code, is the \emph{back-end}.
 
-        Architecture-dependent optimization can take place in this phase.
+        For each instruction of the immediate code, it matches its equivalent, be it single instruction, or a whole function, in the target language.
+
+        Aside from this its main task is to allocate registers for each target instruction, as the immediate code doesn't use any. Because the number of the registers is finite, it also needs to handle management of other data storage forms, such as the \emph{stack}.
+
+        Writing a compiler \emph{back-end} is the goal of this thesis.
 
 \chapter{Compiler Choice}\label{compiler}
 

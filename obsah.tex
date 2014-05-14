@@ -737,8 +737,6 @@ In this chapter, the technical details of the project are discussed.
 
             \begin{center}\texttt{; Function func, arguments: [arg1:\{s0,s1,s2,s3,\},arg2:\{s4,s5,\},arg3:\{s6,\},]}\end{center}
 
-            
-
     \section{Testing}
 
     Several example source files were compiled and ran in a simulator to prove the resulting assembly corresponds to the input source code.
@@ -798,10 +796,10 @@ In this chapter, the technical details of the project are discussed.
 
         \subsection{Test Cases}
 
-            \todo{Hodi se poznamenat, ze testy presne v te podobe, kterou popisuju neexistuji, jsou tak nejak random}
+            \todo{Hodi se poznamenat, ze testy presne pod temito nazvy zatim neexistuji, jsou tak nejak random}
             \begin{center}
             \begin{tabular}{ r | l }
-                \texttt{null.c} & Doesn not compute anything, tests if the whole stack works \\
+                \texttt{null.c} & Does not compute anything, tests if the whole stack works \\
                 \texttt{basic.c} & Basic variable assignment \\
                 \texttt{addsub.c} & Addition and subtraction \\
                 \texttt{bitlogic.c} & Binary operation on the variables \\
@@ -809,6 +807,7 @@ In this chapter, the technical details of the project are discussed.
                 \texttt{condsimple.c} & Simple condition evaluation \\
                 \texttt{condcomplex.c} & Complicated condition evaluation \\
                 \texttt{function.c} & Function calling \\
+                \texttt{funcpointer.c} & Function calling \\
             \end{tabular}
             \end{center}
 
@@ -826,6 +825,12 @@ In this chapter, the technical details of the project are discussed.
     There is no other compiler designed to produce code for the newest revision of the PicoBlaze processor.
 
     The most modern ones support only KCPSM3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
+
+\chapter{Evaluation}\label{evaluation}
+
+To compare PBCCv3 to the other choices that were listed in \ref{existing}, the following test cases and methods were used:
+
+\todo{Sem asi presunout testing z designu, upravit test cases, zkompilovat je v ostatnich kompilatorech}
 
 \chapter{Conclusion}\label{conclusion}
 

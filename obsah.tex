@@ -17,27 +17,27 @@ Subject of this thesis project is constructing a C programming language compiler
 
     \section{The Previous Project}
     Similar thesis topic was elaborated by Jakub Horník as his \todo{citace}
-    master's thesis in year 2011.
+    Master thesis in 2011.;
 
-    While he was writing the thesis, a new version of the target processor was released (see chapter~\ref{processor}). More of the resulting application is discussed in section~\ref{prev_pbcc}.
+    While he was writing the thesis, a new version of the target processor was released (see Chapter~\ref{processor}). The resulting application is discussed in Section~\ref{prev_pbcc}.
 
 \chapter{The PicoBlaze Processor}\label{processor}
 
-Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-programmable gate array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This means the processor is not meant to be physically manufactured, yet it would be possible.
+\emph{PicoBlaze} is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-Programmable Gate Array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This means the processor is not meant to be physically manufactured, yet it would be possible.
 
     \section{History}
 
-    Historically, the name of the design was \texttt{KCPSM}, for \emph{Ken Chapman's Programmable State Machine} and then \emph{Constant Coded Programmable State Machine}. This term is now still used in the FPGA design - the components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
+    Historically, the name of the design was \texttt{KCPSM}, for Ken Chapman's Programmable State Machine and then Constant Coded Programmable State Machine. This term is now still used in the FPGA design - the \emph{VHDL}\footnote{VHSIC (Very High Speed Integrated Circuit) Hardware Description Language} components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
 
         \subsection{PicoBlaze}
 
-        The first version of \emph{PicoBlaze} was released in May 1999.
+        The first version of PicoBlaze was released in May 1999.
 
-        The initial \emph{PicoBlaze} was very simple, especially compared to the current one. There was only space for 256 instructions in the program memory and there was no RAM. Only 16 8-bit registers were available to be used for storage. However, it's possible to connect an external memory through the 256 I/O pins.
+        The initial PicoBlaze was very simple, especially compared to the current one. There was only space for 256 instructions in the program memory and there was no RAM. Only 16 8-bit registers were available to be used for storage. However, it's possible to connect an external memory through the 256 I/O pins.
 
         The multi-byte instructions for arithmetic (\texttt{ADDCY} and \texttt{SUBCY}) were included since the very beginning.
 
-        There was no dedicated instruction for comparing values, but both the \emph{zero} and \emph{carry} flags were present.
+        There was no dedicated instruction for comparing values but both the zero and carry flags were already present.
 
         \subsection{PicoBlaze-2}
 
@@ -45,11 +45,11 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
         The program could consist of 1024 instructions at most and there was no scratchpad memory for runtime variables. The instructions were able to operate only with the 32 8-bit registers and constant values.
 
-        No changes were done to the instruction set from \emph{PicoBlaze}.
+        No changes were done to the instruction set from PicoBlaze.
 
         \subsection{PicoBlaze-3}
 
-        First release of the previous version, 3, of \emph{PicoBlaze} was released on 20th May 2004. Its last revision, 7, was released in October 2003.
+        First release of the previous version, 3, of PicoBlaze was released on 20th May 2004. Its last revision, 7, was released in October 2003.
 
         The register count was reduced to 16 while their size has been kept the same. The main addition in this version is the 64 byte large scratchpad memory, that eliminates the need of an external memory connected through the I/O ports.
 
@@ -57,15 +57,15 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
         \subsection{PicoBlaze-6}
 
-        The \emph{PicoBlaze-6} was initially released on 28th October 2010. Since then, a total of 7 newer revisions of this versions were released.
+        The PicoBlaze-6 was initially released on 28th October 2010. Since then, a total of 7 newer revisions of this versions were released.
 
-        The most recent one, \emph{PicoBlaze-6 release 8}, was released on 31th March 2014.
+        The most recent one, PicoBlaze-6 release 8, was released on 31th March 2014.
 
-        The differences and new features compared to \emph{PicoBlaze-3} are discussed in \ref{kcpsm6cmp}. The main features, regardless of history, are listed in \ref{mainfeatures}
+        The differences and new features compared to PicoBlaze-3 are discussed in Section~\ref{kcpsm6cmp}. The main features, regardless of history, are listed in Section~\ref{mainfeatures}.
 
     \section{Main Features}\label{mainfeatures}
 
-    \emph{PicoBlaze} is a RISC\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles.
+    PicoBlaze is a \emph{RISC}\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles.
 
     \begin{center}
     \begin{tabular}{ @{\extracolsep{\fill} } r | l }
@@ -95,7 +95,7 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
     \section{New features and properties of PicoBlaze-6}\label{kcpsm6cmp}
 
-    Compared to the previous version, there were major changes in PicoBlaze's design after the upgrade to the sixth version, which is still backwards-compatible.
+    Compared to the previous version, there were major changes in PicoBlaze design after the upgrade to the sixth version, which is still backwards-compatible.
 
     The most important ones are covered in this section in descending order according to their impact on programming in C and the compiler itself.
 
@@ -123,7 +123,7 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
         \subsubsection{Program Memory Changes}
 
-        Due to the two newly added memory addressing pins, it is possible to address four times more program memory (now up to 4K), increasing the possible program size and complexity.
+        Due to the two newly added memory addressing pins, it is possible to address four times more program memory (now up to 4096), increasing the possible program size and complexity.
 
         \subsubsection{RAM Changes}
 
@@ -133,7 +133,7 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
         \subsubsection{Call stack}
 
-        Only 30 levels of function call depth are now available compared to 31 of KCPSM3.
+        Only 30 levels of function call depth are now available compared to 31 of PicoBlaze-3.
 
         \subsubsection{New \texttt{LOAD\&RETURN} Instruction and \texttt{STRING} Directive}
 
@@ -147,49 +147,52 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
     \section{PacoBlaze}
 
-    There is an open-source\footnote{BSD licensed} clone of the \emph{PicoBlaze} processor written in Verilog.
+    \emph{PacoBlaze} is an open-source (BSD license) clone of the PicoBlaze processor written in Verilog.
 
-    Its main devise is the possibility to use it with hardware not provided by Xilinx and modifiability and configurability. Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use the smallest required subset - reducing field usage possibly.
+    Its main advantage is the possibility to be used with hardware not provided by Xilinx and modifiability and configurability. 
 
-    The latest version is 2.2 that was released in the year 2007 so it cannot possibly implement the new instructions of PicoBlaze-6 which this project tries to use as much as possible.
+    Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use its smallest required subset, therefore reducing FPGA space use as the result.
+
+    The latest version is 2.2 that was released in the year 2007 so it cannot possibly implement the new instructions of PicoBlaze-6 that this project tries to use as much as possible.
 
     \section{PicoBlaze Assemblers}
 
         \subsection{pBlazASM}\label{pblazasm}
 
-        PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the simulator \ref{pblazsim}.
+        PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the pBlazSIM simulator (that is distributed in the same repository, see Section \ref{pblazsim}).
 
-        However, the program itself is bug infested and crashes quite often. There were some trivial bugs that were possible to be fixed quickly, such as calling \texttt{free()} on a pointer that was not returned by \texttt{malloc()}).
+        However, the program itself is bug infested and crashes quite often. There were some trivial bugs that were possible to be fixed quickly, such as calling \texttt{free} on a pointer that was not returned by \texttt{malloc}).
 
     \section{PicoBlaze Simulators}
 
         \subsection{pBlazSIM}\label{pblazsim}
 
-        As the debugging capabilities of the processor are limited and running the programs on real hardware would be too complicated, possibility of usage a simulator of the target processor is more than welcome.
+        As the debugging capabilities of the processor are limited, making debugging of the programs on real hardware too complicated, possibility of usage a simulator of the target processor is more than welcome.
 
-        One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is written in C++ and Qt, so its usage is not limited only to the Windows platform which is the only one Mediatronix distributes the binary form to.
+        One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is actually hosted in the same repository tree as pBlazASM (see Section \ref{pblazasm}), along with some other tools.
+
+        Hosted under the GPLv2 open source license, it is written in C++ and Qt, so its use is not limited only to one platform. Mediatronix distributes only the Windows binary form, though.
 
             \subsubsection{Running Under Linux}
 
-            First attempts to run the simulator in \emph{Wine}\footnote{WINE is not an Emulator - an open source Windows API implementation} were quite unsuccessful as it was capable of simulation only the code which was included in the distributed binary package.
+            First attempts to run the simulator in \emph{Wine}\footnote{WINE is not an Emulator - an open source Windows API implementation} were quite unsuccessful as it was only capable to simulate the code which was included in the distributed binary package and no other.
 
-            \todo{Citace/linky}
-            However, the application itself is hosted under the GPLv2 open source license in the Google Code repository. 
+            Attempts to compile the simulator from the source provided were unsuccessful, too, at first. Some changes to the distributed files were required.
 
-            It is impossible to compile it directly from the source provided (at least at the time of writing of the thesis). The needed steps to finish the compilation successfully are fixing the \texttt{qmake} project file to include all needed source files and adding one missing icon for the GUI (for example by copying the existing ones in different colors).
+            The needed steps to finish the compilation successfully are fixing the \texttt{qmake} project file to include all needed source files and adding one missing icon for the GUI(for example by copying the existing ones in different colors)\footnote{Graphical User Interface}.
 
-            The hand-compiled version is capable of running the assembly files generated by \ref{pblazasm} well, including all features of its graphical user interface.
+            The hand-compiled version is capable of running the assembly files generated by \ref{pblazasm} well, including all features of its GUI.
 
-            I contacted the upstream developer responsible for the changes that introduced the invalid constructions to fix them. By the time I'm writing this thesis, the code is already fine.
+            I contacted the upstream developer responsible for the changes that introduced the invalid constructions to fix them. The code was fixed by the developer in two days.
 
             \subsubsection{Command Line Simulator}
 
-            Recently a simple simulator without any user interface was introduced to the code-base. The officially provided build system information does not handle its compilation but due to the relative simplicity of the project, it is easy to compile this executable by hand by using the object files of the pBlaze.cpp module.
+            A simple simulator without any user interface was introduced to the code-base recently. The officially provided build system information does not handle its compilation but due to the relative simplicity of the project, it is easy to compile this executable by hand by using the object files of the pBlaze.cpp module.
 
             The simplest way possible (provided you use a C++ compiler that is able to link directly) to compile this binary is by using the following command:
 
             \begin{center}
-                \texttt{\$\{CPP\} pBlaze.cpp pBlazSIMcl.cpp -o \$\{SIM\_BINARY\}}
+                \texttt{\$\{CXX\} pBlaze.cpp pBlazSIMcl.cpp -o \$\{SIM\_BINARY\}}
             \end{center}
 
         \subsection{PBSim}\label{pbsim}
@@ -198,7 +201,7 @@ Picoblaze is a 8-bit processor created by Xilinx Inc. for their Spartan and Virt
 
         A project that is being developed on the University, started as a Master's project in year 2012.
 
-        Bound to \emph{SDCC}.
+        Bound to SDCC (see Section \ref{sdcc}).
 
         Tightly related to Eclipse, it is possible to use it as a part of the user interface.
 
@@ -248,7 +251,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
     \begin{center}\begin{tabular}{r|l}
         \verb|#include "file"| or \verb|<file>| & Behaves as if the whole contents of \verb|file| were inserted \\
         & instead of it\\
-        \verb|#define MACRO ...| & Every occurence of \verb|NAME| in the code is replaced with \\
+        \verb|#define MACRO ...| & Every occurrence of \verb|NAME| in the code is replaced with \\
         & what is substituted with \verb|...| (until the end of line)\\
         \verb|#if cond| & The following lines until \verb|#endif| are pasted if \verb|cond| is\\
         & met. \verb|cond| supports C expression syntax.\\
@@ -262,7 +265,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
         It is a language-specific part, that also checks the correctness of the input code.
 
-        Large compiler projects even aim to its complete and clear replaceability \ref{gcc} \ref{llvm} to benefit from the optimizations in the following stages of compilation.
+        Large compiler projects even aim to its complete and clear replaceability \ref{gcc} \ref{llvm} to benefit from the optimization in the following stages of compilation.
 
         \begin{center}\begin{tikzpicture}
         \tikzstyle{block} = [draw, rectangle, minimum width=10em, minimum height=2.2em]
@@ -296,25 +299,25 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             \begin{center}\texttt{[A-Za-z\_][A-Za-z\_0-9]*}\end{center}
 
-            These names and values are then stored in the \emph{symbol table}, which will be discussed next.
+            These names and values are then stored in the symbol table, which will be discussed in the next section.
 
         \subsection{Symbol Table}
 
-            A \emph{symbol table} is a container storing names of all \emph{symbols} that the \emph{lexical analyzer} has detected.
+            A \emph{symbol table} is a container storing names of all symbols that the lexical analyzer has detected.
 
-            The values here are used further in the compilation, either to resolve the identity of \emph{tokens}, or to actually assign the literal values and use them in the program itself.
+            The values here are used further in the compilation, either to resolve the identity of tokens, or to actually assign the literal values and use them in the program itself.
 
         \subsection{Parser}
 
-            Parser then takes the stream of tokens and arranges them into a tree-like structure. This process is called \emph{syntactic analysis}. It consists not only of arranging the tree but as a side-effect, correct \emph{syntax} of the input code is being checked.
+            \emph{Parser} then takes the stream of tokens and arranges them into a tree-like structure. This process is called \emph{syntactic analysis}. It consists not only of arranging the tree but as a side-effect, correct syntax of the input code is being checked.
 
-            Consider the following expression for demonstration of processes taking place in the \emph{parser}:
+            Consider the following expression for demonstration of processes taking place in the parser:
 
             \begin{center}
             \verb|1 * foo + 5 * bar|
             \end{center}
 
-            The tree, as a result of the \emph{syntactic analysis}, would take the form represented in the next diagram.
+            The tree, as a result of the syntactic analysis, would take the form represented in the next diagram.
 
             Note the operator precedence is honored in the same way as in regular mathematical expressions.
 
@@ -336,7 +339,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \draw (mulR) -- (bar);
             \end{tikzpicture}\end{center}
 
-            There is also other information about the \emph{tokens} in this expression, like types in case of variables. It's necessary to check if they are used in the right context, like if functions are used like functions and not variables or if defined operations are being used upon them.
+            There is also other information about the tokens in this expression, like types in case of variables. It's necessary to check if they are used in the right context, like if functions are used like functions and not variables or if defined operations are being used upon them. This process is called \emph{semantic analysis}.
 
             \begin{center}\begin{tikzpicture}[node distance=1.5cm]
             \node (add) {+};
@@ -356,7 +359,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \draw (mulR) -- (bar);
             \end{tikzpicture}\end{center}
 
-            If \texttt{foo} was not a \texttt{float}, but for example a \texttt{bool} variable, the \emph{semantic analysis} of the expression would fail because the operation of multiplication is not be defined between these two types.
+            If \texttt{foo} was not a \texttt{float} but for example a \texttt{bool} variable the semantic analysis of the expression would fail because the operation of multiplication is not be defined between these two types.
 
             The result types of expressions, are deduced as well. In this case, in C language, the whole expression's result would take form of a \texttt{float}.
 
@@ -368,7 +371,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             Only one kind of resemblance of the previous code will be left - the links in code branches for both conditional and unconditional jumps - this is required to make creating the links in the resulting code easier.
 
-            In case the compiler does not use any kind of intermediate code, directly the target language is being emitted in this section, making the code generator serve the purpose of a \emph{back-end}, too.
+            In case the compiler does not use any kind of intermediate code, directly the target language is being emitted in this section, making the code generator serve the purpose of a back-end (described in Section \ref{desc_backend}), too.
 
     \section{Intermediate Code}
 
@@ -419,7 +422,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             One whole instruction was saved in this case. There are many more techniques that can be applied on any amount of code. One of the simplest ones is \emph{dead code} and \emph{dead variable detection}. When a variable is not used or a conditional branch cannot be entered at any time when the program will be executed, the optimizer can completely remove it.
 
-    \section{Back-end}
+    \section{Back-end}\label{desc_backend}
 
         The target specific part of the compiler, generating the sought code, is the \emph{back-end}.
 
@@ -439,7 +442,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{GNU Compiler Collection}\label{gcc}
 
-    The GNU Compiler Collection, more known as \texttt{GCC}, was started as a simple C compiler in year 1985 by Richard Stallman. It is now one of the most widely used compiler suites not only in open source systems.
+    The GNU Compiler Collection, more known as \texttt{GCC}, was started as a simple C compiler in 1985 by Richard Stallman. It is now one of the most widely used compiler suites not only in open source systems.
 
     Due to its huge history and background, its code base is stable and mature but it also is very hard to read due to historical reasons and the fact basically everything is wrapped in several layers of macros.
 
@@ -453,7 +456,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     Its C and C++ front-end, Clang, is adding the latest features of the new language standards and their drafts sooner than the competitors.
 
-    Compared to GCC, LLVM is a really young project. It was founded in 2005. The codebase is dynamically changing, written in C++ with heavy usage of templates and automatically generated code.
+    Compared to GCC, LLVM is a really young project. It was founded in 2005. The codebase is dynamically changing, written in C++ with heavy use of templates and automatically generated code.
 
     Its development is sponsored by companies like Google, for example to provide ability to run native applications in the browser (NaCl project) or Apple, which utilizes the ecosystem in the official development toolkit provided for their products.
 
@@ -480,10 +483,10 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PCComp}\label{pccomp}
 
-    Picoblaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge, \todo{link}
+    PicoBlaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge, \todo{link}
     yet there are no files to download or source code in the repository and the only relevant activity visible is a question where to actually download the compiler.
 
-    I managed to find a Windows binary in version 1.8.4 in a web archive and a user manual describing the compiler's features, both created in year 2005 or 2006.
+    I managed to find a Windows binary in version 1.8.4 in a web archive and a user manual describing the compiler's features, both created in 2005 or 2006.
 
     However, the limitations of the compiler are vast. It generates stack-based code. This is unfortunate because PicoBlaze lacks any stack. 
 
@@ -505,15 +508,17 @@ This basically rules out all of the proprietary compilers and the selection limi
 
         To list some issues when the flaws of the previous PBCC\ref{prev_pbcc} are taken in question:
 
-        The compiled assembly is often buggy or even nonfunctional and the probabilty of getting broken code is increasing with the complexity of the input source code and the arithmetic expressions in particular.
+        The compiled assembly is often buggy or even nonfunctional and the probability of getting broken code is increasing with the complexity of the input source code and the arithmetic expressions in particular.
 
     \section{PBCC by Bohumil Nováček}\label{not_quite_c}
 
     %% https://dip.felk.cvut.cz/browse/details.php?f=F3&d=K13136&y=2008&a=xnovaceb&t=bach
     \todo{vic popsat, dodat link}
-    This bachelor thesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in year 2008 when only PCComp\ref{pccomp} existed.
+    This bachelor thesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in  2008 when only PCComp\ref{pccomp} existed.
 
     Bohumil has written the program as a part of his bachelor thesis, resulting in great \todo{in great TODO}
+
+    Also, the source code is not to be found anywhere on the Internet, only the text part of the thesis was made public.
 
         \subsection{Features}
 
@@ -525,23 +530,16 @@ This basically rules out all of the proprietary compilers and the selection limi
 
         There is support for one-dimensional arrays only.
 
+        Despite the simplicity of the compiler, there are some optimization methods implemented. For example, constant expressions are replaced by values directly.
+
         \subsection{Limitations}
 
-        There is no support for any user-defined type, be it only a typedef or a complex type (\texttt{struct}, \texttt{union}, \texttt{enum}).
+        There is no support for any user-defined type, whether it is only an enumeration, a \texttt{typedef} type or a complex type (\texttt{struct} or \texttt{union}). This effectively limits the user to use only the basic types that are in this case integers sized one and two bytes.
 
-    ,
-    to name a few limitations, it is impossible to use nor \texttt{typedef} keywords, effectively limiting the user to use only the basic types which are in this case  (again 1 and 2 bytes).
+        There is no expression conditions, strings and multidimensional arrays.
 
-    No expression conditions, strings and multidimensional arrays either are supported
-
-    These limitations are caused by the fact Bohumil decided to write the compiler
-    from scratch without usage of any framework or front-end and the fact the time needed to finish a complete C compiler is far beyond the time-frame of a bachelor thesis.
-
-    However, despite its simplicity, some optimization is implemented, 
-    such as constants and the results of constant expressions being replaced by values directly.
-
-    Also, the source code is not to be found anywhere on the Internet, only the text part of the thesis was made public.
-
+        These limitations are caused by the fact Bohumil decided to write the compiler
+        from scratch without use of any framework or front-end. The time needed to finish a complete C compiler is far beyond the time-frame of a bachelor thesis.
 
     \section{PBCC by Jakub Horník}\label{prev_pbcc}
 
@@ -554,11 +552,12 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     The compiler is based on the Small Device C Compiler (SDCC) modified to provide support for the processor so it offers a subset of features of SDCC in version 3.0.
 
-    There is support for adding further optimization methods provided by SDCC, additionally to its own optimizations those are ran during the compilation process on the intermediate code.
+    There is support for adding further optimization methods provided by SDCC, additionally to its own optimization procedures 
+    that are ran during the compilation process on the intermediate code.
 
     Data types supported are integers large from 1 to 4 bytes, there is also no problem with converting them.
 
-    Usage of arrays (even multidimensional) and pointers is implemented, including their usage as function parameters.
+    Use of arrays (even multidimensional) and pointers is implemented, including their use as function parameters.
 
     PicoBlaze-6 was released only a few months after Jakub started writing the thesis for the previous one, PicoBlaze-3. 
     He did not focus on the new features at all and wrote the program only for the old one.
@@ -574,6 +573,8 @@ This basically rules out all of the proprietary compilers and the selection limi
 
 In this chapter, the technical details of the project are discussed.
 
+The port itself is written in C++ with a layer wrapping the C internals of SDCC.
+
     \section{New Port Addition}
 
         As this process is not documented anywhere in the SDCC documentation and doing it properly would require deep and good understanding of the GNU autotools toolchain, the following procedure was used to add the new port to the SDCC source:
@@ -582,9 +583,9 @@ In this chapter, the technical details of the project are discussed.
 
         \item Create a port source directory in \texttt{src/}, in this case, I was calling it \texttt{pblaze}.
 
-        \item Add the basic source files in the port directory, for example \texttt{main.c} and \texttt{main.h}. \texttt{main.c} has to contain an instance of \texttt{PORT} structure containing information about the port's specifications and pointers to functions that will be called during the compilation.
+        \item Add the basic source files in the port directory, for example \texttt{main.c} and \texttt{main.h}. \texttt{main.c} has to contain an instance of \texttt{PORT} structure containing information about the port specifications and pointers to functions that will be called during the compilation.
 
-        \item Insert a new (unique) port ID into \texttt{src/port.h}, like this for example:
+        \item A new (unique) port ID needs to be inserted into \texttt{src/port.h}:
 
         \texttt{\#define TARGET\_ID\_PBLAZE    16}
 
@@ -608,9 +609,55 @@ In this chapter, the technical details of the project are discussed.
 
         \begin{enumerate}
         \item \texttt{autoconf} creates a \texttt{configure} script to configure the components and compiler options of the final binary
-        \item \texttt{./configure} is a script that compiles a Makefile for the compilation itself. It is possible, for example, to modify the optimization of the compiler binary or disable compilation of \emph{ports} of architectures we will not need.
+        \item \texttt{./configure} is a script that compiles a Makefile for the compilation itself. It is possible, for example, to modify the optimization of the compiler binary or disable compilation of ports of architectures we will not need.
         \item \texttt{make} is the compilation script itself. You can speed the whole process by using the \texttt{-jX} argument specifying that \texttt{X} compiler processes should run at the same time.
         \end{enumerate}
+
+    \section{SDCC Internals Wrapper}
+
+    Using pure C library calls and macros in a C++ project would be a waste of potential of the language, therefore the project is built upon a wrapper library for the SDCC internals instead of using them directly.
+
+    The whole wrapper library is included in the \texttt{wrap} modules.
+
+        \subsection{Approach}
+
+            Every SDCC structure that is vital for the process is wrapped in its own class. These classes are \texttt{Set}, \texttt{EbbIndex}, \texttt{EbBlock}, \texttt{SymLink}, \texttt{Symbol}, \texttt{Value}, \texttt{Operand} and \texttt{ICode}. Their SDCC counterparts are named the same, except they have lower-case initials.
+
+            To provide the ability of implicit up-cast, the classes are directly inheriting the structures themselves.
+
+            Each of the classes has its methods derived from the functions and macros that are operating over them in the SDCC internal library. The methods are partially hand-written and partially generated from the definitions in the header files.
+
+            Aside from the methods, nothing was added to the classes. None of the methods is virtual. That means the memory footprint and binary compatibility of the classes was kept.
+
+    \section{Utilities}
+
+    The \texttt{util} module is containing code for making the code in other parts of the projects easier to read and understand.
+
+        \subsection{Emitter}\label{emitter}
+
+        Every target code output in the C++ part of the port is handled using this class.
+
+        It's using a \texttt{std::ostream}-like\footnote{Output stream class in the C++ Standard Template Library} API (left shift operator overloading) to be easy to spot in the code.
+
+        There is one global instance of the class that is used to output from all other modules.
+
+        The class also provides a static member variable \texttt{i} for iterating when the instruction is being output. This allows the class that is being handled to be able to check the byte position of the multi-byte operands, allowing it to change form in case it's necessary (for example in \texttt{ADD} and \texttt{ADDCY} instructions).
+
+    \section{Register and Memory management}
+
+    
+
+        \subsection{Register Allocation}
+
+        \subsection{Stack Management}
+
+    \section{Code Generator}
+
+    To avoid as much code duplication as possible, every instruction is being emitted using iteration over the \texttt{Emitter::i} variable.
+
+    All instruction classes inherit from the generic \texttt{I} class that also acts as their parent and enclosing class both. It defines the \texttt{toString} virtual method that the children implement. This method is used in the overloaded left shift operator of \texttt{Emitter} (see Section \ref{emitter}) and \texttt{I} to obtain the whole string representation of the operation and write it into the output file.
+
+    
 
     \section{Compiled Assembly Properties}
 
@@ -647,7 +694,7 @@ In this chapter, the technical details of the project are discussed.
             \hline
         \end{tabular}\end{center}
 
-        The returned value is stored in the first registers in the same way as the parameters were stored. Little-endian order limits the register usage in the caller to the bare minimum.
+        The returned value is stored in the first registers in the same way as the parameters were stored. Little-endian order limits the register use in the caller to the bare minimum.
 
         Restoring of the saved registers is done in the caller, too.
 
@@ -657,11 +704,11 @@ In this chapter, the technical details of the project are discussed.
 
         To make use of as much of the new specification as possible, the compiler supports calling function pointers using the \texttt{CALL@} instruction.
 
-        Prior to the instruction invocation itself, the function pointer is stored in the \texttt{sD} and \texttt{sE} registers. As the address of a function is larger than the size of one register, it has to be stored in two of them - \texttt{sD} cointains the upper 4 bits of the address and \texttt{sE} the lower 8 bits.
+        Prior to the instruction invocation itself, the function pointer is stored in the \texttt{sD} and \texttt{sE} registers. As the address of a function is larger than the size of one register, it has to be stored in two of them - \texttt{sD} contains the upper 4 bits of the address and \texttt{sE} the lower 8 bits.
 
         Rather than limiting all functions' arguments to reserve the two registers for a possible function pointer call, only pointers to functions with lesser than 13 bytes worth of arguments is possible.
 
-        Other than this, there is no limitation to function pointer usage.
+        Other than this, there is no limitation to function pointer use.
 
         \subsection{Register Bank Utilization}
 
@@ -689,7 +736,7 @@ In this chapter, the technical details of the project are discussed.
 
         Only basic arithmetic supported by the processor is implemented, that means there is no basic support for multiplication nor division of the variables.
 
-        The functions to mutliply can be extracted from the previous PBCC\ref{prev_pbcc} and inserted as inline assembly in a separate function, according to the calling functions.
+        The functions to multiply can be extracted from the previous PBCC\ref{prev_pbcc} and inserted as inline assembly in a separate function, according to the calling conventions.
 
         Other than that, the operations are utilizing the improved instructions handling multi-byte variables in minimum cycles.
 
@@ -738,12 +785,12 @@ In this chapter, the technical details of the project are discussed.
             \begin{center}\texttt{; Function func, arguments: [arg1:\{s0,s1,s2,s3,\},arg2:\{s4,s5,\},arg3:\{s6,\},]}\end{center}
 
     \section{Testing}
-
+ 
     Several example source files were compiled and ran in a simulator to prove the resulting assembly corresponds to the input source code.
 
         \subsection{Tools and the Testing Process}
 
-        \texttt{PBlazSIM}\ref{pblazsim} was chosen to simulate the resulting code due to its simplicity, maturity and liveliness of the upstream developers. 
+        \texttt{PBlazSIM} (described in Section \ref{pblazsim}) was chosen to simulate the resulting code due to its simplicity, maturity and liveliness of the upstream developers.
 
             \subsubsection{Obtaining the Simulation Result}
 
@@ -751,11 +798,11 @@ In this chapter, the technical details of the project are discussed.
 
                 The only modification done is as follows: When the simulation ends because of an error or reaches the correct final state of the simulation (this happens once it  the \texttt{BREAK} internal opcode is processed), it prints the state of the processor to the standard output.
 
-                The output is formatted for easy parsing and usage in the attached test suite.
+                The output is formatted for easy parsing and use in the attached test suite.
 
             \subsubsection{Assembler}
 
-                The input to \texttt{PBlazSIM} are rich assembly language files enhanced with binary representation of the code it is about to simulate. This format is compiled using \texttt{PBlazASM}\ref{pblazasm} using the \texttt{\-l} flag and results in a \texttt{.LST} extended file.
+                The input to \texttt{PBlazSIM} are rich assembly language files enhanced with binary representation of the code it is about to simulate. This format is compiled using \texttt{PBlazASM} (see Section \ref{pblazasm}) using the \texttt{\-l} flag and results in a file with \texttt{.LST} extension.
 
                 There were no special modifications required to get the needed results except the ones mentioned in \ref{pblazasm}.
 
@@ -763,7 +810,7 @@ In this chapter, the technical details of the project are discussed.
 
         All scripts are ran recursively for each \texttt{.c} and \texttt{.tst} file in the \texttt{test} directory in the root of the code tree.
 
-        Every \texttt{.c} file has to have its counter-part with the same base name (except the suffix) to be considered a valid test.
+        Every \texttt{.c} file has to have its \texttt{.tst} counter-part with the same base name to be considered a valid test.
 
         It tests the memory and the registers for presence of any value given (with the exception of omitted zero values, considering major part of the memory will be free in most cases), be it on a specifically given position or anywhere.
 
@@ -782,7 +829,7 @@ In this chapter, the technical details of the project are discussed.
             \end{tabular}
             \end{center}
 
-            The variables are declared and defined in pseudo-C style (without the type specification), that means: enumerations take a brace-enclosed list as their initializer and boolean values can be either \texttt{true} or \texttt{false}.
+            The variables are declared and defined in pseudo-C style (without the type specification), that means: enumerations take a brace-enclosed list as their initializer and Boolean values can be either \texttt{true} or \texttt{false}.
 
             Every definition has to be ended with a semicolon. Double definitions will result in a failing test.
 
@@ -815,16 +862,15 @@ In this chapter, the technical details of the project are discussed.
 
     \section{Code Clarity}
 
-    \todo{extensibility asi neni slovo}
-    The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2\ref{prev_pbcc}.
+    The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2(see Section \ref{prev_pbcc}).
 
     Providing a C++ API also helps by providing more syntax sugar for anybody who wants to further modify the compiler. Using class methods instead of macros and functions also adds the possibility to use an IDE\footnote{Integrated Development Environment} with method suggestion.
 
-    \section{KCPSM6 Support}
+    \section{PicoBlaze-6 Support}
 
-    There is no other compiler designed to produce code for the newest revision of the PicoBlaze processor.
+    There is no other C compiler designed to produce code exclusively for the newest revision of the PicoBlaze processor.
 
-    The most modern ones support only KCPSM3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
+    The most modern ones support only PicoBlaze-3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
 
 \chapter{Evaluation}\label{evaluation}
 

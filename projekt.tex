@@ -27,6 +27,7 @@
 \usepackage{url}
 \usepackage{listings}
 \usepackage{tikz}
+\usepackage{float}
 \usetikzlibrary{arrows,decorations.markings,positioning,shapes.symbols,shapes.callouts,shapes.geometric,patterns,calc} 
 \tikzset{
     vertex/.style = {
@@ -37,6 +38,9 @@
     }
 }
 \DeclareUrlCommand\url{\def\UrlLeft{<}\def\UrlRight{>} \urlstyle{tt}}
+\floatstyle{plain}
+\newfloat{listing}{thp}{lop}[chapter]
+\floatname{listing}{Listing}
 
 %zde muzeme vlozit vlastni balicky
 

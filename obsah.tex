@@ -10,16 +10,20 @@ Subject of this thesis project is constructing a C programming language compiler
 
     \section{The C Programming Language}
 
-    \todo{citace, citace, citace}
-
-    The C programming language was created in the seventies \todo{spisovne?}
-    of the twentieth century by Dennis Ritchie and Ken Thompson. In this project, I focused mainly on implementing its two latest standards, ISO/IEC 9899:1999 and partially ISO/IEC 9899:2011.
+    The C programming language was created in the 1970s by Dennis Ritchie and Ken Thompson. In this project, I focused mainly on implementing its two latest standards, ISO/IEC 9899:1999 \cite{C99} and partially ISO/IEC 9899:2011.\cite{C11}
 
     \section{The Previous Project}
-    Similar thesis topic was elaborated by Jakub Horník as his \todo{citace}
-    Master thesis in 2011.;
+    Similar thesis topic was elaborated by Jakub Horník as his Master thesis in 2011. This project is discussed in Section \ref{prev_pbcc}.
 
     While he was writing the thesis, a new version of the target processor was released (see Chapter~\ref{processor}). The resulting application is discussed in Section~\ref{prev_pbcc}.
+
+    \section{Structure of the Document}
+
+    After in introduction to PicoBlaze in Section \ref{processor} and explaining the basic principles of compiler design in section \ref{compiler}, the available existing and open source C language compiler front-ends are enumerated in Section \ref{frontend}.
+
+    Next, the previous projects implementing a compiler for the PicoBlaze processor, are listed in Section \ref{previous}.
+
+    And finally, Section \ref{design} explains the principles that the final application builds upon and its functionality is tested and evaluated in Section \ref{evaluation}.
 
 \chapter{The PicoBlaze Processor}\label{processor}
 
@@ -27,7 +31,7 @@ Subject of this thesis project is constructing a C programming language compiler
 
     \section{History}
 
-    Historically, the name of the design was \texttt{KCPSM}, for Ken Chapman's Programmable State Machine and then Constant Coded Programmable State Machine. This term is now still used in the FPGA design - the \emph{VHDL}\footnote{VHSIC (Very High Speed Integrated Circuit) Hardware Description Language} components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.\cite{DSPwFPGA}
+    Historically, the name of the design was \texttt{KCPSM}, for Ken Chapman's Programmable State Machine and then Constant Coded Programmable State Machine. This term is now still used in the FPGA design - the \emph{VHDL}\footnote{\emph{VHSIC} (Very High Speed Integrated Circuit) Hardware Description Language} components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.\cite{DSPwFPGA}
 
         \subsection{PicoBlaze}
 
@@ -567,7 +571,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PBCC by Jakub Horník}\label{prev_pbcc}
 
-    PicoBlaze C Compiler is a project sponsored by Virtuální laboratoř aplikovaných mikroprocesorů \todo{Overit}
+    PicoBlaze C Compiler is a project sponsored by Virtuální laboratoř aplikovaných mikroprocesorů
     realized on the Faculty of Information Technology, Brno University of Technology.
 
     It was written in years 2010 - 2011 by Jakub Horník as a part of his master's thesis and is now maintained by Zbyněk Křivka, supervisor of this thesis.\cite{PbccProjekt}
@@ -669,6 +673,10 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         The class also provides a static member variable \texttt{i} for iterating when the instruction is being output. This allows the class that is being handled to be able to check the byte position of the multi-byte operands, allowing it to change form in case it is necessary (for example in \texttt{ADD} and \texttt{ADDCY} instructions).
 
+        \subsection{Function}
+
+        
+
     \section{Register and Memory management}
 
     
@@ -683,7 +691,9 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
     All instruction classes inherit from the generic \texttt{I} class that also acts as their parent and enclosing class both. It defines the \texttt{toString} virtual method that the children implement. This method is used in the overloaded left shift operator of \texttt{Emitter} (see Section \ref{emitter}) and \texttt{I} to obtain the whole string representation of the operation and write it into the output file.
 
-    
+        \subsection{Generating Functions and Calls}
+
+        \subsection{Generating assignment}
 
     \section{Compiled Assembly Properties}
 
@@ -822,7 +832,27 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
             \begin{center}\texttt{; Function func, arguments: [arg1:\{s0,s1,s2,s3,\},arg2:\{s4,s5,\},arg3:\{s6,\},]}\end{center}
 
-    \section{Testing}
+\chapter{Port Features}\label{features}
+
+    \section{Code Clarity}
+
+    The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2(see Section \ref{prev_pbcc}).
+
+    Providing a C++ API also helps by providing more syntax sugar for anybody who wants to further modify the compiler. Using class methods instead of macros and functions also adds the possibility to use an IDE\footnote{Integrated Development Environment} with method suggestion.
+
+    \section{PicoBlaze-6 Support}
+
+    There is no other C compiler designed to produce code exclusively for the newest revision of the PicoBlaze processor.
+
+    The most modern ones support only PicoBlaze-3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
+
+    One of the cases when this is true is multi-byte variable comparison - equality check had to be done using many jumps and storing intermediate results, the new \texttt{COMPARECY} reuses the carry and zero values that are already in the flags.
+
+\chapter{Testing and Evaluation}\label{evaluation}
+
+It's necessary to evaluate the overall success of a compiler project by testing it a comparing to alternative. In this section, the testing and comparison methods are described.
+
+    \section{Testing}\label{testing}
  
     Several example source files were compiled and ran in a simulator to prove the resulting assembly corresponds to the input source code.
 
@@ -896,30 +926,39 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
             \end{tabular}
             \end{center}
 
-\chapter{Port Features}\label{features}
+    \section{Evaluation}
 
-    \section{Code Clarity}
+    To evaluate this project in comparison to the other alternatives (listed in Section \ref{existing}), the same test cases were used as in the functionality testing (described in Section \ref{testing}).
 
-    The extensibility and readability of this port is not comparable to any other port. The code generation itself takes only about 5 lines of code for each \texttt{ICode}, compared to tens to hundreds in PBCCv2(see Section \ref{prev_pbcc}).
+    The tests were designed to be compileable in all other compilers, except the cases when an unavailable feature is being tested.
 
-    Providing a C++ API also helps by providing more syntax sugar for anybody who wants to further modify the compiler. Using class methods instead of macros and functions also adds the possibility to use an IDE\footnote{Integrated Development Environment} with method suggestion.
+    The metric of quality (in case the program compiles and is valid) was chosen to be the count of used instructions.
 
-    \section{PicoBlaze-6 Support}
+    A table with a matrix of test results, with a comment for the most characteristic ones follows.
 
-    There is no other C compiler designed to produce code exclusively for the newest revision of the PicoBlaze processor.
-
-    The most modern ones support only PicoBlaze-3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
-
-    One of the cases when this is true is multi-byte variable comparison - equality check had to be done using many jumps and storing intermediate results, the new \texttt{COMPARECY} reuses the carry and zero values that are already in the flags.
-
-\chapter{Evaluation}\label{evaluation}
-
-To compare PBCCv3 to the other choices that were listed in Section \ref{existing}, the following test cases and methods were used:
-
-\todo{Sem asi presunout testing z designu, upravit test cases, zkompilovat je v ostatnich kompilatorech}
+    \begin{table}[H]
+    \centering
+    \emph{\checkmark(instructions)} for succeeded, \emph{$\times$(reason)} for failed
+    \begin{tabular}{| r | c | c | c | c |}
+    \hline
+            &PBCCv3           &PBCCv2 (J. Horník)&PBCC (B. Nováček)&PCComp\\
+\hline
+\hline\texttt{basic}& \checkmark(50)  & \checkmark          & \checkmark        & \checkmark \\
+\hline\texttt{arith}& \checkmark(24)  & \checkmark          & \checkmark        & $\times$(no support) \\
+\hline\texttt{logic}& \checkmark(23)  & \checkmark          & \checkmark        & $\times$(invalid) \\
+\hline\texttt{cond\_simple}& \checkmark      & \checkmark          & \checkmark        & \checkmark \\
+\hline\texttt{cond\_complex}& \checkmark      & \checkmark          & \checkmark        & \checkmark \\
+\hline\texttt{func\_basic}& \checkmark      & \checkmark          & \checkmark        & \checkmark \\
+\hline\texttt{func\_ptr}& \checkmark      & \checkmark          & \checkmark        & \checkmark \\
+\hline\texttt{func\_recurs}& \checkmark      & \checkmark          & \checkmark        & \checkmark \\
+\hline\texttt{struct}& \checkmark      & \checkmark          & \checkmark        & \checkmark \\
+\hline\texttt{I/O}& \checkmark      & \checkmark          & \checkmark        & \checkmark \\
+\hline
+    \end{tabular}
+    \caption{Test results}
+    \end{table}
 
 \chapter{Conclusion}\label{conclusion}
 
 
-\cite{TBD}
 %=========================================================================

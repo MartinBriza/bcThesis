@@ -23,11 +23,11 @@ Subject of this thesis project is constructing a C programming language compiler
 
 \chapter{The PicoBlaze Processor}\label{processor}
 
-\emph{PicoBlaze} is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-Programmable Gate Array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This means the processor is not meant to be physically manufactured, yet it would be possible.
+\emph{PicoBlaze} is a 8-bit processor created by Xilinx Inc. for their Spartan and Virtex FPGA\footnote{Field-Programmable Gate Array} series as an embeddable circuit to implement sequential programming in the parallel FPGA architecture. This means the processor is not meant to be physically manufactured, yet it would be possible.\cite{PicoBlazeWeb}
 
     \section{History}
 
-    Historically, the name of the design was \texttt{KCPSM}, for Ken Chapman's Programmable State Machine and then Constant Coded Programmable State Machine. This term is now still used in the FPGA design - the \emph{VHDL}\footnote{VHSIC (Very High Speed Integrated Circuit) Hardware Description Language} components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.
+    Historically, the name of the design was \texttt{KCPSM}, for Ken Chapman's Programmable State Machine and then Constant Coded Programmable State Machine. This term is now still used in the FPGA design - the \emph{VHDL}\footnote{VHSIC (Very High Speed Integrated Circuit) Hardware Description Language} components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor.\cite{DSPwFPGA}
 
         \subsection{PicoBlaze}
 
@@ -37,7 +37,7 @@ Subject of this thesis project is constructing a C programming language compiler
 
         The multi-byte instructions for arithmetic (\texttt{ADDCY} and \texttt{SUBCY}) were included since the very beginning.
 
-        There was no dedicated instruction for comparing values but both the zero and carry flags were already present.
+        There was no dedicated instruction for comparing values but both the zero and carry flags were already present.\cite{PicoBlaze}
 
         \subsection{PicoBlaze-2}
 
@@ -45,7 +45,7 @@ Subject of this thesis project is constructing a C programming language compiler
 
         The program could consist of 1024 instructions at most and there was no scratchpad memory for runtime variables. The instructions were able to operate only with the 32 8-bit registers and constant values.
 
-        No changes were done to the instruction set from PicoBlaze.
+        No changes were done to the instruction set from PicoBlaze.\cite{PicoBlaze2}
 
         \subsection{PicoBlaze-3}
 
@@ -53,19 +53,19 @@ Subject of this thesis project is constructing a C programming language compiler
 
         The register count was reduced to 16 while their size has been kept the same. The main addition in this version is the 64 byte large scratchpad memory, that eliminates the need of an external memory connected through the I/O ports.
 
-        Instruction set changes in this version include the addition of comparison, testing and parity counting instructions.
+        Instruction set changes in this version include the addition of comparison, testing and parity counting instructions.\cite{PicoBlaze3}
 
         \subsection{PicoBlaze-6}
 
         The PicoBlaze-6 was initially released on 28th October 2010. Since then, a total of 7 newer revisions of this versions were released.
 
-        The most recent one, PicoBlaze-6 release 8, was released on 31th March 2014.
+        The most recent one, PicoBlaze-6 release 8, was released on 31th March 2014.\cite{PicoBlaze6}
 
         The differences and new features compared to PicoBlaze-3 are discussed in Section~\ref{kcpsm6cmp}. The main features, regardless of history, are listed in Section~\ref{mainfeatures}.
 
     \section{Main Features}\label{mainfeatures}
 
-    PicoBlaze is a \emph{RISC}\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles.
+    PicoBlaze is a \emph{RISC}\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles.\cite{PicoBlazeWeb}\cite{PicoBlaze6}
 
     \begin{table}[H]
     \centering
@@ -95,13 +95,13 @@ Subject of this thesis project is constructing a C programming language compiler
 
     It is suitable to used to control simple devices and to communicate over serial interfaces. The use-cases presented by the manufacturer are LCD drivers, SPI communication, controlling devices such as A/D controller.
 
-    Time-based operations as pulse width modulation are possible with the processor, as well as display of real time clock or frequency measuring.
+    Time-based operations as pulse width modulation are possible with the processor, as well as display of real time clock or frequency measuring.\cite{PicoBlazeExamples}
 
     \section{New features and properties of PicoBlaze-6}\label{kcpsm6cmp}
 
     Compared to the previous version, there were major changes in PicoBlaze design after the upgrade to the sixth version, which is still backwards-compatible.
 
-    The most important ones are covered in this section in descending order according to their impact on programming in C and the compiler itself.
+    The most important ones are covered in this section in descending order according to their impact on programming in C and the compiler itself.\cite{PicoBlaze6}
 
         \subsubsection{New \texttt{JUMP@} and \texttt{CALL@} Instructions}\label{jumpat}
 
@@ -157,13 +157,13 @@ Subject of this thesis project is constructing a C programming language compiler
 
     Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use its smallest required subset, therefore reducing FPGA space use as the result.
 
-    The latest version is 2.2 that was released in the year 2007 so it cannot possibly implement the new instructions of PicoBlaze-6 that this project tries to use as much as possible.
+    The latest version is 2.2 that was released in the year 2007 so it cannot possibly implement the new instructions of PicoBlaze-6 that this project tries to use as much as possible.\cite{PacoBlaze}
 
     \section{PicoBlaze Assemblers}
 
         \subsection{pBlazASM}\label{pblazasm}
 
-        PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the pBlazSIM simulator (that is distributed in the same repository, see Section \ref{pblazsim}).
+        PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the pBlazSIM simulator (that is distributed in the same repository, see Section \ref{pblazsim}).\cite{PblazAsm}
 
         However, the program itself is bug infested and crashes quite often. There were some trivial bugs that were possible to be fixed quickly, such as calling \texttt{free} on a pointer that was not returned by \texttt{malloc}).
 
@@ -173,7 +173,7 @@ Subject of this thesis project is constructing a C programming language compiler
 
         As the debugging capabilities of the processor are limited, making debugging of the programs on real hardware too complicated, possibility of usage a simulator of the target processor is more than welcome.
 
-        One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is actually hosted in the same repository tree as pBlazASM (see Section \ref{pblazasm}), along with some other tools.
+        One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is actually hosted in the same repository tree as pBlazASM (see Section \ref{pblazasm}), along with some other tools.\cite{PblazSim} \cite{PblazAsmRepo}
 
         Hosted under the GPLv2 open source license, it is written in C++ and Qt, so its use is not limited only to one platform. Mediatronix distributes only the Windows binary form, though.
 
@@ -201,13 +201,11 @@ Subject of this thesis project is constructing a C programming language compiler
 
         \subsection{PBSim}\label{pbsim}
 
-        \todo{Malo informaci, nakonec ho stejne nepouzivam... asi dat pryc uplne}
+        A project that is being developed on the University, started as a Master's project in year 2012.\cite{PbsimProj}
 
-        A project that is being developed on the University, started as a Master's project in year 2012.
+        Bound to SDCC (see Section \ref{sdcc}) and tightly related to Eclipse, it is possible to use it as a part of its UI.
 
-        Bound to SDCC (see Section \ref{sdcc}).
-
-        Tightly related to Eclipse, it is possible to use it as a part of the user interface.
+        It is hosted under the GPLv2 license on Github \cite{PbsimRepo} but there are no instruction to compile the project. In comparison to pBlazSIM (see Section \ref{pblazsim}), it's not active at all.
 
 \chapter{Programming language compiler}
 
@@ -225,7 +223,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
     An intermediate code optimizer searches the representation for patterns that can be changed to more efficient, smaller or faster equivalents. This part is optional, too.
 
-    And finally, the back-end, that generates the target code for the processor itself, be it assembly code, virtual machine code or a processor-native code.
+    And finally, the back-end, that generates the target code for the processor itself, be it assembly code, virtual machine code or a processor-native code.\cite{DragonBook}
 
     \begin{figure}[H]
     \centering
@@ -253,7 +251,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
     The most common task is removing comments to leave only language defined tokens for the further stages of compilation.
 
-    In the C programming language, there are preprocessor macros, too. These serve a purpose of replacing and inserting text. However, describing the entirety of the C preprocessor is a task beyond limits of this thesis, only few directives are listed, along with their simplified descriptions.
+    In the C programming language, there are preprocessor macros, too. These serve a purpose of replacing and inserting text. However, describing the entirety of the C preprocessor is a task beyond limits of this thesis, only few directives are listed, along with their simplified descriptions.\cite{GnuCppWeb}
 
     \begin{table}[H]
     \begin{tabular}{r|l}
@@ -306,9 +304,9 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             Reading the input stream character by character, it breaks it down to segments called \emph{tokens}, according to rules that are set by the language standard.
 
-            For example, there can be a token representing a \emph{keyword} (like \texttt{if} or \texttt{for}), a literal value (\texttt{42} or \verb'"string"',...) or a type or symbol name (\texttt{foo}, \texttt{main},...). 
+            For example, there can be a token representing a \emph{keyword} (like \texttt{if} or \texttt{for}), a literal value (\texttt{42} or \verb'"string"',...) or a type or symbol name (\texttt{foo}, \texttt{main},...).\cite{DragonBook}
 
-            A token of the \texttt{if} keyword will be always represented with the same string - \texttt{if}, but a variable name in C can take form of any string that matches this regular expression:
+            A token of the \texttt{if} keyword will be always represented with the same string - \texttt{if}, but a variable name in C can take form of any string that matches this regular expression:\cite{C99}
 
             \begin{center}\texttt{[A-Za-z\_][A-Za-z\_0-9]*}\end{center}
 
@@ -316,7 +314,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
         \subsection{Symbol Table}
 
-            A \emph{symbol table} is a container storing names of all symbols that the lexical analyzer has detected.
+            A \emph{symbol table} is a container storing names of all symbols that the lexical analyzer has detected.\cite{DragonBook}
 
             The values here are used further in the compilation, either to resolve the identity of tokens, or to actually assign the literal values and use them in the program itself.
 
@@ -332,7 +330,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \caption{Example expression}\label{lst:expr}
             \end{listing}
 
-            The tree, as a result of the syntactic analysis, would take the form represented in the next diagram.
+            The tree, as a result of the syntactic analysis, would take the form represented in the next diagram.\cite{CompilerDesignInC}
 
             Note the operator precedence is honored in the same way as in regular mathematical expressions.
 
@@ -358,7 +356,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \caption{Syntactic tree} \label{fig:syntactic}
             \end{figure}
 
-            There is also other information about the tokens in this expression, like types in case of variables. It is necessary to check if they are used in the right context, like if functions are used like functions and not variables or if defined operations are being used upon them. This process is called \emph{semantic analysis}.
+            There is also other information about the tokens in this expression, like types in case of variables. It is necessary to check if they are used in the right context, like if functions are used like functions and not variables or if defined operations are being used upon them. This process is called \emph{semantic analysis}.\cite{DragonBook}
 
             \begin{figure}[H]
             \centering
@@ -390,7 +388,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             While the trees are being constructed and checked, the intermediate code is created as well.
 
-            The \emph{parser} feeds the completed subtrees and their nodes into the code generator that flattens the structure into a series of instructions, similar to the assembly language of a computer processor.
+            The \emph{parser} feeds the completed subtrees and their nodes into the code generator that flattens the structure into a series of instructions, similar to the assembly language of a computer processor.\cite{DragonBook}
 
             Only one kind of resemblance of the previous code will be left - the links in code branches for both conditional and unconditional jumps - this is required to make creating the links in the resulting code easier.
 
@@ -400,7 +398,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             As mentioned in the previous section, the intermediate code resembles assembly. The difference between the two is still quite big though. Intermediate code contains a lot more information, like variable names, information about liveness of the variables, type information and much more.
 
-            Popular form of such output is called \emph{three address code}. Every instruction in this simple language takes a maximum of three operands, first marks where the result will be stored and the other to are the source operands.
+            Popular form of such output is called \emph{three address code}. Every instruction in this simple language takes a maximum of three operands, first marks where the result will be stored and the other to are the source operands.\cite{DragonBook}
 
             Consider the example we already used, defined in Listing \ref{lst:expr}.
 
@@ -426,7 +424,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \caption{Example of a two-operand intermediate code}\label{lst:2ic}
             \end{listing}
 
-            Three address code as intermediate language is very common in compilers. This puts them close to some processor architectures, such as ARM, that uses a form of three address code as its assembly language. In contrary, other architectures, like x86, or, PicoBlaze, that this thesis targets, use only two operands in their assembly.
+            Three address code as intermediate language is very common in compilers. This puts them close to some processor architectures, such as ARM, that uses a form of three address code as its assembly language. \cite{ARM} In contrary, other architectures, like x86 \cite{x86}, or, PicoBlaze \cite{PicoBlaze6}, that this thesis targets, use only two operands in their assembly.
 
         \subsection{The Intermediate Code Optimizer}
 
@@ -447,11 +445,9 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
             \caption{Optimized three address code from Listing \ref{lst:tac}}\label{lst:opttac}
             \end{listing}
 
-            
-
             One whole instruction was saved in this case.
 
-            There are many more techniques that can be applied on any amount of code. One of the simplest ones is \emph{dead code} and \emph{dead variable detection}. When a variable is not used or a conditional branch cannot be entered at any time when the program will be executed, the optimizer can completely remove it.
+            There are many more techniques that can be applied on any amount of code. One of the simplest ones is \emph{dead code} and \emph{dead variable detection}. When a variable is not used or a conditional branch cannot be entered at any time when the program will be executed, the optimizer can completely remove it.\cite{OptimizingCompiler}
 
     \section{Back-end}\label{desc_backend}
 
@@ -513,12 +509,12 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PCComp}\label{pccomp}
 
-    PicoBlaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge, \todo{link}
+    PicoBlaze C Compiler, the project of Francesco Poderico, has its own page on Sourceforge\footnote{http://sourceforge.net/projects/pccomp/},
     yet there are no files to download or source code in the repository and the only relevant activity visible is a question where to actually download the compiler.
 
     I managed to find a Windows binary in version 1.8.4 in a web archive and a user manual describing the compiler's features, both created in 2005 or 2006.
 
-    However, the limitations of the compiler are vast. It generates stack-based code. This is unfortunate because PicoBlaze lacks any stack. 
+    However, the limitations of the compiler are vast. It generates stack-based code. This is unfortunate because PicoBlaze lacks any stack.\cite{pccompman}
 
         \subsection{Features}
 
@@ -542,11 +538,9 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PBCC by Bohumil Nováček}\label{not_quite_c}
 
-    %% https://dip.felk.cvut.cz/browse/details.php?f=F3&d=K13136&y=2008&a=xnovaceb&t=bach
-    \todo{vic popsat, dodat link}
     This bachelor thesis was written on Faculty of Electrical Engineering of Czech Technical University in Prague in  2008 when only PCComp (Section \ref{pccomp}) existed.
 
-    Bohumil has written the program as a part of his bachelor thesis, resulting in great \todo{in great TODO}
+    Bohumil has written the program as a part of his bachelor thesis, resulting in a small application able to compile a limited subset of the C programming language.\cite{PbccNovacek}
 
     Also, the source code is not to be found anywhere on the Internet, only the text part of the thesis was made public.
 
@@ -573,31 +567,33 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PBCC by Jakub Horník}\label{prev_pbcc}
 
-    \todo{FIXME prepsat}
-
     PicoBlaze C Compiler is a project sponsored by Virtuální laboratoř aplikovaných mikroprocesorů \todo{Overit}
     realized on the Faculty of Information Technology, Brno University of Technology.
 
-    It was written in years 2010 - 2011 by Jakub Horník as a part of his master's thesis and is now maintained by Zbyněk Křivka, supervisor of this thesis.
+    It was written in years 2010 - 2011 by Jakub Horník as a part of his master's thesis and is now maintained by Zbyněk Křivka, supervisor of this thesis.\cite{PbccProjekt}
 
-    The compiler is based on the Small Device C Compiler (SDCC) modified to provide support for the processor so it offers a subset of features of SDCC in version 3.0.
+    The compiler is based on the Small Device C Compiler (SDCC) modified to provide support for the processor so it offers a subset of features of SDCC in version 3.0.\cite{PbccHornik}
 
-    There is support for adding further optimization methods provided by SDCC, additionally to its own optimization procedures 
-    that are ran during the compilation process on the intermediate code.
+        \subsection{Features}
 
-    Data types supported are integers large from 1 to 4 bytes, there is also no problem with converting them.
+        There is support for adding further optimization methods provided by SDCC, additionally to its own optimization procedures 
+        that are ran during the compilation process on the intermediate code.
 
-    Use of arrays (even multidimensional) and pointers is implemented, including their use as function parameters.
+        Data types supported are integers large from 1 to 4 bytes, there is also no problem with converting them.
 
-    PicoBlaze-6 was released only a few months after Jakub started writing the thesis for the previous one, PicoBlaze-3. 
-    He did not focus on the new features at all and wrote the program only for the old one.
-    This is the reason why function pointers left unimplemented and what I will be focusing on in this project.
+        Use of arrays (even multidimensional) and pointers is implemented, including their use as function parameters.
 
-    The main reason to rewrite the compiler from scratch is to avoid carrying all the legacy instructions and features and to focus on the cleanest possible implementation of the current revision of the processor.
+        PicoBlaze-6 was released only a few months after Jakub started writing the thesis for the previous one, PicoBlaze-3. 
+        He did not focus on the new features at all and wrote the program only for the old one.
+        This is the reason why function pointers left unimplemented and what I will be focusing on in this project.
 
-    Jakub also suggests allocating the registers by coloring them and using the information for better results when memory access frequency is taken in question.
+        \subsection{Limitations}
 
-    This means I wrote the whole program again while using just a few parts from the original code.
+        The main reason to rewrite the compiler from scratch is to avoid carrying all the legacy instructions and features and to focus on the cleanest possible implementation of the current revision of the processor.
+
+        Jakub also suggests allocating the registers by coloring them and using the information for better results when memory access frequency is taken in question.
+
+        Unclear code copied over from other ports that is not very comprehensible is the reason why I wrote the whole program again while using just a few parts from the original code.
 
 \chapter{Implementation Design}\label{design}
 

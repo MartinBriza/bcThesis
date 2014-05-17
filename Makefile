@@ -9,25 +9,14 @@ all: $(CO).pdf
 
 pdf: $(CO).pdf
 
-$(CO).ps: $(CO).dvi
-	dvips $(CO)
-
 $(CO).pdf: clean
-	pdflatex -shell-escape $(CO)
+	pdflatex -shell-escape $(CO).tex
 	bibtex $(CO)
-	pdflatex -shell-escape $(CO)
-	pdflatex -shell-escape $(CO)
-
-$(CO).dvi: $(CO).tex $(CO).bib
-	latex -shell-escape $(CO)
+	pdflatex -shell-escape $(CO).tex
+	pdflatex -shell-escape $(CO).tex
 	bibtex $(CO)
-	latex -shell-escape $(CO)
-	latex -shell-escape $(CO)
 
 desky:
-#	latex desky
-#	dvips desky
-#	dvipdf desky
 	pdflatex desky
 
 clean:

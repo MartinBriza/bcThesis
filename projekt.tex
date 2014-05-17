@@ -26,6 +26,7 @@
 \usepackage[T1, IL2]{fontenc}
 \usepackage{url}
 \usepackage{listings}
+\usepackage[backend=bibtex]{biblatex}
 \usepackage{tikz}
 \usepackage{float}
 \usetikzlibrary{arrows,decorations.markings,positioning,shapes.symbols,shapes.callouts,shapes.geometric,patterns,calc} 
@@ -116,6 +117,7 @@
 %\acknowledgment{V této sekci je možno uvést poděkování vedoucímu práce a těm, kteří poskytli odbornou pomoc
 %(externí zadavatel, konzultant, apod.).}
 
+\bibliography{literatura} % viz. literatura.bib
 \begin{document}
   % Vysazeni titulnich stran
   % ----------------------------------------------
@@ -134,14 +136,8 @@
 
   % Pouzita literatura
   % ----------------------------------------------
-\ifczech
-  \bibliographystyle{czechiso}
-\else 
-  \bibliographystyle{plain}
-%  \bibliographystyle{alpha}
-\fi
   \begin{flushleft}
-  \bibliography{literatura} % viz. literatura.bib
+  \printbibliography
   \end{flushleft}
   \appendix
   

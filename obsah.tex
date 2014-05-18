@@ -1,20 +1,14 @@
 %=========================================================================
 % (c) Michal Bidlo, Bohuslav Křena, 2008
 
-%TODO
-%klikatelne linky
-%seznam chyb predchozich kompilatoru
-
 \definecolor{gray}{gray}{0.5}
 \newcommand{\todo}[1]{\textcolor{red}{TODO\:} \textcolor{gray}{#1}}
 
 \chapter{Introduction}\label{introduction}
 
-Subject of this thesis project is constructing a C programming language compiler for the soft-core processor PicoBlaze-6.
+Subject of this thesis project is constructing a C programming language compiler back-end for the soft-core processor PicoBlaze-6. The 8-bit processor is quite simple but after the recent update, it provides an interesting set of features to use in C programs.
 
-    \section{Motivation}
-
-    Currently, there is no other C compiler designed especially for the PicoBlaze-6 processor. This iteration of the design adds many useful features making the processor more suitable for programming in C therefore a compiler is a welcome addition to the existing toolchain.
+However, Currently, there is no other C compiler designed especially for the PicoBlaze-6 processor, therefore a new compiler utilizing the new features is a welcome addition to the existing toolchain.
 
     \section{The C Programming Language}
 
@@ -173,6 +167,8 @@ Subject of this thesis project is constructing a C programming language compiler
 
     \section{PicoBlaze Assemblers}
 
+        Compilation to the machine code directly is not feasible because it prevents further modifications of the resulting code. It's also not absolutely necessary as there already are complete assemblers, with features, implementing which would reduce the time available for writing the C compiling part of the toolchain.
+
         \subsection{pBlazASM}\label{pblazasm}
 
         PBlazASM is an open source assembler created by Mediatronix to be used for compiling the machine code source files directly to machine code in several formats. It can also create a representation (\texttt{.lst} files) that is then used in the pBlazSIM simulator (that is distributed in the same repository, see Section \ref{pblazsim}) \cite{PblazAsm}.
@@ -181,9 +177,9 @@ Subject of this thesis project is constructing a C programming language compiler
 
     \section{PicoBlaze Simulators}
 
-        \subsection{pBlazSIM}\label{pblazsim}
-
         As the debugging capabilities of the processor are limited, making debugging of the programs on real hardware too complicated, possibility of usage a simulator of the target processor is more than welcome.
+
+        \subsection{pBlazSIM}\label{pblazsim}
 
         One of the most recent ones, pBlazSIM, was created by Mediatronix, too. It is actually hosted in the same repository tree as pBlazASM (see Section \ref{pblazasm}), along with some other tools \cite{PblazSim}. \cite{PblazAsmRepo}
 
@@ -318,7 +314,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             For example, there can be a token representing a \emph{keyword} (like \texttt{if} or \texttt{for}), a literal value (\texttt{42} or \verb'"string"',...) or a type or symbol name (\texttt{foo}, \texttt{main},...) \cite{DragonBook}.
 
-            A token of the \texttt{if} keyword will be always represented with the same string - \texttt{if}, but a variable name in C can take form of any string that matches this regular expression:\cite{C99}
+            A token of the \texttt{if} keyword will be always represented with the same string - \texttt{if}. However, a variable name in C can take form of any string that matches the following regular expression \cite{C99}.
 
             \begin{center}\texttt{[A-Za-z\_][A-Za-z\_0-9]*}\end{center}
 
@@ -406,7 +402,7 @@ In this chapter, the most vital parts and terms in construction of a compiler ar
 
             In case the compiler does not use any kind of intermediate code, directly the target language is being emitted in this section, making the code generator serve the purpose of a back-end (described in Section \ref{desc_backend}), too.
 
-    \section{Intermediate Code}
+    \section{Intermediate Code}\label{immediate}
 
             As mentioned in the previous section, the intermediate code resembles assembly. The difference between the two is still quite big though. Intermediate code contains a lot more information, like variable names, information about liveness of the variables, type information and much more.
 
@@ -487,7 +483,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     The documentation of the inner functionality is hard to find and it is not very well arranged. Because of its heritage, the structure does not seem very transparent.
 
-    Free Software Foundation and the GNU Project are holding governance over the development and are prohibiting major changes to the architecture or code style which drives many new developers away.\footnote{http://gcc.gnu.org/ml/gcc/2014-01/msg00176.html}
+    Free Software Foundation and the GNU Project are holding governance over the development and are prohibiting major changes to the architecture or code style which drives many new developers away.\footnote{\url{http://gcc.gnu.org/ml/gcc/2014-01/msg00176.html}}
 
     \section{Low Level Virtual Machine}\label{llvm}
 
@@ -519,7 +515,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
     \section{PCComp}\label{pccomp}
 
-    PicoBlaze C Compiler, the project of Francesco Poderico, has its own page on SourceForge\footnote{http://sourceforge.net/projects/pccomp/},
+    PicoBlaze C Compiler, the project of Francesco Poderico, has its own page on SourceForge\footnote{\url{http://sourceforge.net/projects/pccomp/}},
     yet there are no files to download or source code in the repository and the only relevant activity visible is a question where to actually download the compiler.
 
     I managed to find a Windows binary in version 1.8.4 in a web archive and a user manual describing the compiler's features, both created in 2005 or 2006.
@@ -530,11 +526,11 @@ This basically rules out all of the proprietary compilers and the selection limi
 
         The compiler is not strictly following the C standard and implements only its small subset.
 
-        PicoBlaze, PicoBlaze-2 and PicoBlaze-3 support.
+        The supported cores are PicoBlaze, PicoBlaze-2 and PicoBlaze-3.
 
-        Byte and word (1 and 2 bytes) types only are supported.
+        Only the support for byte and word (1 and 2 bytes) types was implemented.
 
-        One-dimensional arrays without any pointer arithmetic are implemented by the compiler.
+        One-dimensional arrays without any pointer arithmetic are supported by the compiler.
 
         \subsection{Limitations}
 
@@ -558,9 +554,9 @@ This basically rules out all of the proprietary compilers and the selection limi
 
         Processor support is limited to PicoBlaze-3.
 
-        The types supported are \texttt{void}, \texttt{char} and \texttt{int}.
+        The types supported are \texttt{void}, \texttt{char} and \texttt{int}, again sized only 1 and 2 bytes.
 
-        There is support for one-dimensional arrays only.
+        Only one-dimensional arrays are available to the user.
 
         Despite the simplicity of the compiler, there are some optimization methods implemented. For example, constant expressions are replaced by values directly.
 
@@ -607,7 +603,7 @@ In this chapter, the technical details of the project are discussed.
 
 The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
-    \section{New Port Addition}
+    \section{New Port Addition}\label{compilation}
 
         As this process is not documented anywhere in the SDCC documentation and doing it properly would require deep and good understanding of the GNU autotools toolchain, the following procedure was used to add the new port to the SDCC source:
 
@@ -633,7 +629,7 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
             \subsection{Automation of new port addition}
 
-            These tasks are automated in the included \texttt{glue.sh} script. When it is executed in  Bash\footnote{Bourne Again Shell, http://www.gnu.org/software/bash/} with the \texttt{SDCC\_HOME} environment variable set to point to the directory with both PBCC and SDCC source code, it completes all the necessary tasks.
+            These tasks are automated in the included \texttt{glue.sh} script. When it is executed in  Bash\footnote{Bourne Again Shell, \url{http://www.gnu.org/software/bash/}} with the \texttt{SDCC\_HOME} environment variable set to point to the directory with both PBCC and SDCC source code, it completes all the necessary tasks.
 
         \section{Compilation}
 
@@ -677,15 +673,41 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         \subsection{Function}
 
-        
+        \texttt{Function} is a class containing public static members only. It provides information about the current Function the compiler is processing, such as parameter count and their sizes.
+
+        Its main purpose is to compute which function parameters will need to be stored on stack and which parameters will be passed through registers.
+
+        The processing method is called every time the \texttt{FUNCTION} iCode is reached.
 
     \section{Register and Memory management}
 
-    
+    The code providing the functionality described in Section \ref{immediate} is located in the \texttt{ralloc} module.
+
+    The entry point is the \texttt{Allocator} class, precisely its static method \texttt{assignRegisters} that takes the basic block index as its parameter.
 
         \subsection{Register Allocation}
 
-        \subsection{Stack Management}
+        The register management is handled in the \texttt{Register} class which is wrapped in \texttt{Bank} to provide the ability to switch the banks and pass operands between them.
+
+        When there is no free register available, the LRU\footnote{Least Recently Used} algorithm is applied to find the one that is to be freed and stored in the scratchpad memory until the next use.
+
+        \subsection{Stack Management}\label{stack}
+
+        The stack is growing up, starting at the zero address. All stores and operations on both function entry and leave are processed in the \texttt{Stack} class which implements all necessary moves on the stack pointer (SP).
+
+        Each of the stored variables has an instance of \texttt{StackCell} class assigned, containing the information about the offset from the pointer and the start of the variable.
+
+        All variables are stored in big endian order, consecutively.
+
+        The stack pointer is stored in the \texttt{sF} register, in both banks. On bank switch, it is propagated to contain the changes done to it.
+
+        \subsection{Static Memory}
+
+        Static memory, used for storage of global variables, is implemented in the \texttt{Memory} class.
+
+        In most aspects, including the implemented interface, it is similar to the \texttt{Stack} (see Section \ref{stack}). The most important difference is no necessity to do anything on function calls and different implementation using only position in memory.
+
+        As in the case of \texttt{Stack}, the variables are stored consecutively in big endian order.
 
     \section{Code Generator}
 
@@ -693,15 +715,9 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
     All instruction classes inherit from the generic \texttt{I} class that also acts as their parent and enclosing class both. It defines the \texttt{toString} virtual method that the children implement. This method is used in the overloaded left shift operator of \texttt{Emitter} (see Section \ref{emitter}) and \texttt{I} to obtain the whole string representation of the operation and write it into the output file.
 
-        \subsection{Generating Functions and Calls}
+        \subsection{Function and Call Generation}
 
-        \subsection{Assignment Generation}
-
-    \section{Compiled Assembly Properties}
-
-    The compiler is producing commented assembly to be given to an assembler which then in turn produces various its binary equivalents or other formats, for example suitable for simulation.
-
-    In this section, the vital properties, required for getting grasp of the code (for its further modification by hand, for example), are discussed.
+        Every function 
 
         \subsection{Calling Conventions}
 
@@ -768,6 +784,34 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         In effect, this makes having most of the program logic in the \texttt{main} function, as it does not have to store most of its registers before calling a function, thus reducing the number of necessary \texttt{FETCH} and \texttt{STORE} instructions to move the local variables in the stack memory.
 
+        \subsection{Assignment Generation}
+
+        There are differend cases we have to handle on assignment in the compiler.
+
+            \subsubsection{Function call parameters}
+
+            The compiler detects when the assignment is done in a function call. This means the available operand registers are already full, so the following arguments need to be stored on stack.
+
+            These assignments are done preemptively, the variables go on stack directly. The stack pointer in the function will handle these as if they were saved there in the function body directly.
+
+            \subsubsection{Dereferenced pointer assignment}
+
+            The PicoBlaze-6 has only 256 bytes of scratchpad RAM (see Section \ref{mainfeatures}) - this means the pointers to variables take only one byte of memory.
+
+            Assignment to these is done using the \texttt{STORE} instruction. However, \texttt{STORE} cannot take a literal as its source data argument. Therefore, a temporary operand is allocated and used for temporary storage of the data being store
+
+            \subsubsection{Temporary Variable on the Right Side}
+
+            This case occurs when a temporary variable with a life scope that does not reach beyond the sequence number of the iCode containing this assignment. This usually occurs on an immediate computation in an complex expression.
+
+            Instead of moving the variable, the registers are only reassigned to the result operand.
+
+            \subsubsection{Other Cases}
+
+            The other cases cover assignments with regular variables and literal values as operands. The temporary variables with longer life scope are included, too.
+
+            There is nothing special on this case - the values are moved using the \texttt{LOAD} instruction. A \texttt{FETCH} is used first if the variable has been saved to memory.
+
         \subsection{Stack and Variable Storage}
 
         Local variables of the program are initially created in the registers. Only once there is not enough room for any other variable needed for an operation in future, it is freed from the register and stored on the stack.
@@ -783,6 +827,14 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
         The functions to multiply can be extracted from the previous PBCC (see Section \ref{prev_pbcc}) and inserted as inline assembly in a separate function, according to the calling conventions.
 
         Other than that, the operations are utilizing the improved instructions handling multi-byte variables in minimum cycles.
+
+
+
+    \section{Compiled Assembly Properties}
+
+    The compiler is producing commented assembly to be given to an assembler which then in turn produces various its binary equivalents or other formats, for example suitable for simulation.
+
+    In this section, the vital properties, required for getting grasp of the code (for its further modification by hand, for example), are discussed.
 
         \subsection{Comments in the Code}
 
@@ -849,6 +901,17 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
     The most modern ones support only PicoBlaze-3 so they miss the opportunity to save not only the program space (meaning less CPU cycles for the same program) but also the scratchpad memory and registers (which means the program will utilize less CPU cycles again).
 
     One of the cases when this is true is multi-byte variable comparison - equality check had to be done using many jumps and storing intermediate results, the new \texttt{COMPARECY} reuses the carry and zero values that are already in the flags.
+
+    \section{Built-in Functions}
+
+    The necessity to communicate with connected peripheries is satisfied by using the\texttt{char port\_in(char port)} and \texttt{void port\_out(char port, char value)} built-in functions.
+
+    They are compiled into \texttt{OUTPUT}, \texttt{OUTPUTK} and \texttt{INPUT} instructions, respectively. \texttt{OUTPUTK} is used when it is possible - that is, when both operands are constant and the port is in the range \texttt{0x0} -- \texttt{0xF}.
+
+    They don't follow calling conventions, the arguments are passed directly to the instruction. \texttt{INPUT} returns the read value into the operand where available.
+
+    
+
 
 \chapter{Testing and Evaluation}\label{evaluation}
 
@@ -961,6 +1024,13 @@ It's necessary to evaluate the overall success of a compiler project by testing 
     \end{table}
 
 \chapter{Conclusion}\label{conclusion}
+
+The back-end project was started from scratch except for som wrapper code, therefore the expected functionality was not a complete C compiler. The implemented subset is able to compute a wide range of test applications.
+
+However, the real world usability of the compiled programs is not very high because of incomplete implementation of conditional jumps.
+
+If taken as an excersise and exploration of the limits of the processor, the project succeeded. Function pointers are really usable and testing applications utilizing them work correctly.
+
 
 
 %=========================================================================

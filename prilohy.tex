@@ -3,4 +3,121 @@
 %\chapter{Konfigrační soubor}
 %\chapter{RelaxNG Schéma konfiguračního soboru}
 %\chapter{Plakat}
+\chapter{CD Contents}
+
+
+
+\chapter{Installation}
+
+SDCC lists the following dependencies: Boost, Yacc, Bison.
+
+To compile the \texttt{pblaze} port, you have to use a C++ compiler that supports the ISO/IEC 14882:2011 (C++11) standard.
+
+The port can be built against any recent snapshot of SDCC and version 3.4.0. It is possible to compile it against SDCC 3.3.0, too but on some machines, \texttt{configure} does not generate the required \texttt{Makefile}. The CD includes version 3.3.0 with the \texttt{Makefile} already generated.
+
+If you compile the project from new source directly, please follow the steps listed in Section \ref{compilation} now.
+
+To run the compiled binary (especially on \texttt{merlin.fit.vutbr.cz}), you need to link against the correct \texttt{libstdc++} on runtime.
+To do so on \texttt{merlin}, add the following path to your \texttt{LD\_LIBRARY\_PATH}:
+
+\begin{center}\verb|/pub/tmp/gcc/gcc-4.9.0/.x86_64-linux/x86_64-linux/libstdc++-v3/src/.libs|\end{center}
+
+\chapter{PicoBlaze-6 Instruction Set}
+\begin{table}[H]
+\centering
+r - register, p - address in register, cX - constant, size, l - label
+\begin{tabular}{| r | c | c | l |}\hline
+
+\verb|LOAD|&\verb|r|&\verb|r|& Moves contents of registers\\ \hline
+\verb|LOAD|&\verb|r|&\verb|c|& Moves contents of registers\\ \hline
+\verb|STAR|&\verb|r|&\verb|r|& Moves contents of registers between banks\\ \hline
+
+\verb|AND|&\verb|r|&\verb|r|& Binary and\\ \hline
+\verb|AND|&\verb|r|&\verb|c|& Binary and\\ \hline
+\verb|OR|&\verb|r|&\verb|r|& Binary or\\ \hline
+\verb|OR|&\verb|r|&\verb|c|& Binary or\\ \hline
+\verb|XOR|&\verb|r|&\verb|r|& Binary xor\\ \hline
+\verb|XOR|&\verb|r|&\verb|c|& Binary xor\\ \hline
+
+\verb|ADD|&\verb|r|&\verb|r|& Addition\\ \hline
+\verb|ADD|&\verb|r|&\verb|c|& Addition\\ \hline
+\verb|ADDCY|&\verb|r|&\verb|r|& Addition, reuses carry\\ \hline
+\verb|ADDCY|&\verb|r|&\verb|c|& Addition, reuses carry\\ \hline
+\verb|SUB|&\verb|r|&\verb|r|& Subtraction\\ \hline
+\verb|SUB|&\verb|r|&\verb|c|& Subtraction\\ \hline
+\verb|SUBCY|&\verb|r|&\verb|r|& Subtraction, reuses carry\\ \hline
+\verb|SUBCY|&\verb|r|&\verb|c|& Subtraction, reuses carry\\ \hline
+
+
+\verb|TEST|&\verb|r|&\verb|r|& Binary and without result storage\\ \hline
+\verb|TEST|&\verb|r|&\verb|c|& Binary and without result storage\\ \hline
+\verb|TESTCY|&\verb|r|&\verb|r|& Binary and without result storage, reuses carry\\ \hline
+\verb|TESTCY|&\verb|r|&\verb|c|& Binary and without result storage, reuses carry\\ \hline
+\verb|COMPARE|&\verb|r|&\verb|r|& Operand comparison\\ \hline
+\verb|COMPARE|&\verb|r|&\verb|c|& Operand comparison\\ \hline
+\verb|COMPARECY|&\verb|r|&\verb|r|& Operand comparison, reuses carry\\ \hline
+\verb|COMPARECY|&\verb|r|&\verb|c|& Operand comparison, reuses carry\\ \hline
+
+\verb|SL0|&\verb|r|&\verb||& Shift left, fill 0 \\ \hline
+\verb|SL1|&\verb|r|&\verb||& Shift left, fill 1 \\ \hline
+\verb|SLX|&\verb|r|&\verb||& Shift left, fill LSB \\ \hline
+\verb|SLA|&\verb|r|&\verb||& Shift left, fill carry \\ \hline
+\verb|RL|&\verb|r|&\verb||& Rotate left \\ \hline
+\verb|SR0|&\verb|r|&\verb||& Shift right, fill 0 \\ \hline
+\verb|SR1|&\verb|r|&\verb||& Shift right, fill 1 \\ \hline
+\verb|SRX|&\verb|r|&\verb||& Shift right, fill LSB \\ \hline
+\verb|SRA|&\verb|r|&\verb||& Shift right, fill carry \\ \hline
+\verb|RR|&\verb|r|&\verb||& Rotate right \\ \hline
+
+\verb|REGBANK|&\verb|A|&\verb||& Select bank A \\ \hline
+\verb|REGBANK|&\verb|B|&\verb||& Select bank B \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+r - register, p - address in register, cX - constant, size, l - label
+\begin{tabular}{| r | c | c | l |}\hline
+\verb|INPUT|&\verb|r|&\verb|p|& Read data from a port \\ \hline
+\verb|INPUT|&\verb|r|&\verb|c8|& Read data from a port \\ \hline
+\verb|OUTPUT|&\verb|r|&\verb|p|& Write data to a port \\ \hline
+\verb|OUTPUT|&\verb|r|&\verb|c8|& Write data to a port \\ \hline
+\verb|OUTPUTK|&\verb|r|&\verb|p|& Write constant data to a specific port\\ \hline
+
+\verb|STORE|&\verb|r|&\verb|p|& Write data to scratchpad memory \\ \hline
+\verb|STORE|&\verb|r|&\verb|c8|& Write data to scratchpad memory \\ \hline
+\verb|FETCH|&\verb|r|&\verb|p|& Read data from scratchpad memory \\ \hline
+\verb|FETCH|&\verb|r|&\verb|c8|& Read data from scratchpad memory \\ \hline
+
+\verb|DISABLE INTERRUPT|&\verb||&\verb||& Disable interrupt \\ \hline
+\verb|ENABLE INTERRUPT|&\verb||&\verb||& Enable interrupt \\ \hline
+\verb|RETURNI DISABLE|&\verb||&\verb||& Disable return from interrupt handler \\ \hline
+\verb|RETURNI ENABLE|&\verb||&\verb||& Enable return from interrupt handler \\ \hline
+
+\verb|JUMP|&\verb|l|&\verb||& Jump to label \\ \hline
+\verb|JUMP|&\verb|Z|&\verb|l|& Jump to label if zero \\ \hline
+\verb|JUMP|&\verb|NZ|&\verb|l|& Jump to label if not zero \\ \hline
+\verb|JUMP|&\verb|C|&\verb|l|& Jump to label if carry \\ \hline
+\verb|JUMP|&\verb|NC|&\verb|l|& Jump to label if not carry \\ \hline
+\verb|JUMP@|&\verb|p|&\verb|p|& Jump to label pointer\\ \hline
+
+\verb|CALL|&\verb|l|&\verb||& Call label \\ \hline
+\verb|CALL|&\verb|Z|&\verb|l|& Call label if zero \\ \hline
+\verb|CALL|&\verb|NZ|&\verb|l|& Call label if not zero \\ \hline
+\verb|CALL|&\verb|C|&\verb|l|& Call label if carry \\ \hline
+\verb|CALL|&\verb|NC|&\verb|l|& Call label if not carry \\ \hline
+\verb|CALL|&\verb|Z|&\verb|l|& Call label pointer \\ \hline
+
+\verb|RETURN|&\verb||&\verb||& Return from call \\ \hline
+\verb|RETURN|&\verb|Z|&\verb||& Return if zero \\ \hline
+\verb|RETURN|&\verb|NZ|&\verb||& Return if not zero  \\ \hline
+\verb|RETURN|&\verb|C|&\verb||& Return if carry \\ \hline
+\verb|RETURN|&\verb|NC|&\verb||& Return if not carry \\ \hline
+
+\verb|LOAD&RETURN|&\verb|r|&\verb|c|& Load a constant and return \\ \hline
+
+\verb|HWBUILD|&\verb|r|&\verb||& Get harware information\\ \hline
+\end{tabular}
+\end{table}
+
 

@@ -265,7 +265,7 @@ Práce je chráněna autorským zákonem a její užití bez udělení oprávně
 \vfill
 
 \mktxt@b{16}{\@cite@CS}
-\noindent\@author: \@title, \MakeLowercase{\@projecttype@CS}, Brno, FIT VUT v~Brně, \@year
+\noindent\@author: C Language Compiler Back-End for PicoBlaze-6, \MakeLowercase{\@projecttype@CS}, Brno, FIT VUT v~Brně, \@year
 %===================================================
 \newpage
 
@@ -285,7 +285,7 @@ Práce je chráněna autorským zákonem a její užití bez udělení oprávně
 %-----------------------------------------------------------------------------
 \newcommand\makedeclaration{
 \thispagestyle{empty}%
-\mktxt@b{18}{\@title}
+\mktxt@b{18}{C Language Compiler Back-End for PicoBlaze-6}
 
 \vspace{10mm}
 \mktxt@b{16}{\@tdecl@CS}

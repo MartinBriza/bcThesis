@@ -26,6 +26,9 @@
 \usepackage[T1, IL2]{fontenc}
 \usepackage{url}
 \usepackage{hyphenat}
+\usepackage{tabularx, booktabs}
+\usepackage[table]{xcolor}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
 \usepackage{listings}
 \usepackage[backend=bibtex]{biblatex}
 \usepackage{tikz}
@@ -93,13 +96,13 @@
   keywords.en={vhdl, c, compiler, sdcc, picoblaze, processor, fpga}, %klicova slova v anglickem jazyce
   %Abstract
   abstract.cs={Tato práce řeší konstrukci zadní části kompilátoru jazyka C pro soft-core procesor PicoBlaze-6 od firmy Xilinx.
-  K řešení tohoto problému bylo zvoleno užití projektu SDCC coby přední části překladače.
+  K řešení tohoto problému bylo zvoleno užití projektu Small Device C Compiler coby přední části překladače.
   Vytvořené řešení poskytuje podporu volání ukazatelů na funkce a užití struktur.
   Hlavním přínosem této práce je přenesení pokročilých konstrukcí jazyka C na procesor PicoBlaze.}, % abstrakt v ceskem jazyce
   abstract.en={The goal of this thesis is to construct a C compiler back-end for the soft-core processor PicoBlaze-6 by Xilinx, Inc.
-  The construction itself was done by use of the SDCC as the compiler front-end.
+  The construction itself was done by use of the Small Device C Compiler as the front-end.
   The resulting application offers the ability to compile function pointer calling and structure usage.
-  The main benefit of this thesis is bringing of some advanced C language constructions to the PicoBlaze processor.}, % abstrakt v anglickem jazyce
+  The main benefit of this thesis is bringing some of advanced C language constructs to the PicoBlaze processor.}, % abstrakt v anglickem jazyce
   %Prohlaseni
   declaration={Prohlašuji, že jsem tuto bakalářskou práci vypracoval sám pod vedením Ing. Zbyňka Křivky, Ph.D. },
   %Podekovani (nepovinne)
@@ -128,13 +131,13 @@
 \extendedabstract{
     Tato práce se zabývá konstrukcí zadní části překladače jazyka C pro procesor PicoBlaze-6 od firmy Xilinx.
 
-    PicoBlaze je soft-core procesor (šířený jako design ve VHDL) určený pro vložení do FPGA čipů řady Spartan a Virtex. Jeho nově vydaná verze, 6, přidává několik nových instrukcí, upravuje chování řady stávajících a především rozšiřuje velikost programové i operační paměti spouštěných programů.
+    PicoBlaze je soft-core procesor (šířený jako design ve VHDL a Verilogu) určený pro vložení do FPGA čipů řady Spartan a Virtex. Jeho nově vydaná verze, 6, přidává několik nových instrukcí, upravuje chování řady stávajících a především rozšiřuje velikost programové i operační paměti spouštěných programů.
 
-    Pro vytvoření kompletního překladače je použit open-source framework SDCC, který tak slouží jako front-end. V práci popsaný back-end pak generuje jazyk symbolických instrukcí v notaci určené pro pBlazASM od firmy Mediatronix.
+    Pro vytvoření kompletního překladače je použit open-source framework Small Device C Compiler, který tak slouží jako přední část. V práci popsaná zadní část pak generuje jazyk symbolických instrukcí v notaci určené pro pBlazASM od firmy Mediatronix.
 
     Výsledná práce se pak věnuje především implementaci pokročilých konstrukcí jazyka, které nebyly dostupné v předchozích kompilátorech.
 
-    Jmenovitě, tou nejpodstatnější vlastností jsou ukazatele na funkce, následuje implementace struktur.
+    Jmenovitě, tou nejpodstatnější vlastností jsou ukazatele na funkce, následuje podpora komplexních datových typů (například struktur.
 
     Z ostatních vlastností kompilátor umožňuje využívat vstupní i výstupní porty procesoru pro komunikaci s periferiemi. Implementované je i volání funkcí, včetně rekurze. Podpora aritmetických operací je základní, tedy shodná s jejich podporou na straně procesoru - podporovány jsou všechny operace kromě násobení a dělení. Nicméně, kód pro násobení a dělení na tomto procesoru je možné převzít z předchozí diplomové práce na toto téma.
 
@@ -147,6 +150,8 @@
   % Vysazeni titulnich stran
   % ----------------------------------------------
   \maketitle
+
+  \input{preklad}
   % Obsah
   % ----------------------------------------------
   \tableofcontents

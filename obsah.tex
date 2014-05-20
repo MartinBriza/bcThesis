@@ -42,7 +42,7 @@ However, Currently, there is no other C compiler designed especially for the Pic
 
         The initial PicoBlaze was very simple, especially compared to the current one. There was only space for 256 instructions in the program memory and there was no RAM. Only 16 8-bit registers were available to be used for storage. However, it is possible to connect an external memory through the 256 I/O pins.
 
-        The multi-byte instructions for arithmetics (\texttt{ADDCY} and \texttt{SUBCY}) were included since the very beginning.
+        The multi-byte arithmetic instructions (\texttt{ADDCY} and \texttt{SUBCY}) were included since the very beginning.
 
         There was no dedicated instruction for value comparison but both the zero and carry flags were already present \cite{PicoBlaze}.
 
@@ -93,7 +93,7 @@ However, Currently, there is no other C compiler designed especially for the Pic
         FPGA design & Can be included directly in the hardware code \\
                     & No other equipment or code needed \\
     \end{tabular}
-    \caption{PicoBlaze-6 features} \cite{PicoBlazeWeb}
+    \caption{PicoBlaze-6 features \cite{PicoBlazeWeb}}
     \end{table}
 
     \section{Practical usage}
@@ -500,7 +500,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
         \subsection{Architecture}
 
-        LLVM is strictly separated into front and back ends, divided by the LLVM intermediate code that is heavily optimized and is runnable directly in a virtual machine (hence the name Low Level \emph{Virtual Machine})
+        LLVM is strictly separated into front and back ends, divided by the LLVM intermediate code that is heavily optimized and is executable directly in a virtual machine (hence the name Low Level \emph{Virtual Machine})
 
     \section{Small Device C Compiler}\label{sdcc}
 
@@ -513,6 +513,8 @@ This basically rules out all of the proprietary compilers and the selection limi
     The intermediate code is not documented very well (there is a list of all the iCodes on the project's wiki) but is simple enough to be understandable.
 
 \chapter{Existing Solutions}\label{existing}
+
+The idea of writing C compilers for PicoBlaze is not new. There has been a few projects implementing C compilers directly, or compilers of languages based on C. The most exposed ones are covered in this chapter.
 
     \section{PCComp}\label{pccomp}
 
@@ -567,7 +569,7 @@ This basically rules out all of the proprietary compilers and the selection limi
 
         There is no expression conditions, strings and multidimensional arrays.
 
-        These limitations are caused by the fact Bohumil decided to write the compiler
+        These limitations are caused by the fact the author decided to write the compiler
         from scratch without use of any framework or front-end. The time needed to finish a complete C compiler is far beyond the time-frame of a bachelor thesis.
 
     \section{PBCC by Jakub Horník}\label{prev_pbcc}
@@ -588,13 +590,15 @@ This basically rules out all of the proprietary compilers and the selection limi
 
         Use of arrays (even multidimensional) and pointers is implemented, including their use as function parameters.
 
-        PicoBlaze-6 was released only a few months after the inception of the thesis that was targetting the previous one, PicoBlaze-3. This topic is discussed in Chapter \ref{processor}. The main focus of the thesis was the older iteration of the processor, therefore function pointers and all other new features were left unimplemented.
+        PicoBlaze-6 was released only a few months after the inception of the thesis that was targeting the previous one, PicoBlaze-3. This topic is discussed in Chapter \ref{processor}. The main focus of the thesis was the older iteration of the processor, therefore function pointers and all other new features were left unimplemented.
 
         \subsection{Limitations}
 
+        There is a list of known problems and limits list in the official documentation. To name a few, there is no support for getting or setting values on a memory address and limited support for global variables and interrupt vectors.
+
         The main reason to rewrite the compiler from scratch is to avoid carrying all the legacy instructions and features and to focus on the cleanest possible implementation of the current revision of the processor.
 
-        Jakub also suggests allocating the registers by coloring them and using the information for better results when memory access frequency is taken in question.
+        The author also suggests allocating the registers by coloring them and using the information for better results when memory access frequency is taken in question.
 
         Unclear code copied over from other ports that is not very comprehensible is the reason why I wrote the whole program again while using just a few parts from the original code.
 
@@ -656,11 +660,11 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
             Each of the classes has its methods derived from the functions and macros that are operating over them in the SDCC internal library. The methods are partially hand-written and partially generated from the definitions in the header files.
 
-            Aside from the methods, nothing was added to the classes. None of the methods is virtual. That means the memory footprint and binary compatibility of the classes was kept.
+            Aside from the methods, nothing was added to the classes. None of the methods is virtual. That means the memory footprint and binary compatibility with original structures is kept.
 
     \section{Utilities}
 
-    The \texttt{util} module is containing code for making the code in other parts of the projects easier to read and understand.
+    The \texttt{util} module contains code for making the code in other parts of the projects easier to read and understand.
 
         \subsection{Emitter}\label{emitter}
 
@@ -668,15 +672,15 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         It implements a \texttt{std::ostream}-like\footnote{Output stream class in the C++ Standard Template Library} (left shift operator overloading) API to be easy to spot in the code.
 
-        There is one global instance of the class that is used to output from all other modules.
+        There is one static instance of the class that is used to output from all other modules. The constructor was left open in case another separate output was needed. This option was left unused so far though.
 
-        The class also provides a static member variable \texttt{i} for iterating when the instruction is being output. This allows the class that is being handled to be able to check the byte position of the multi-byte operands, allowing it to change form in case it is necessary (for example in \texttt{ADD} and \texttt{ADDCY} instructions).
+        The class also provides a static member variable \texttt{i} for iterating when an instruction is being output. This allows the \texttt{Instruction} class that is being handled to be able to check the byte position in the multi-byte operands. This makes changing instruction forms (for example between \texttt{ADD} and \texttt{ADDCY}) possible. It is also used in the overloaded left shift operator for operands, to get their current needed byte.
 
         \subsection{Function}
 
-        \texttt{Function} is a class containing public static members only. It provides information about the current Function the compiler is processing, such as parameter count and their sizes.
+        \texttt{Function} is a class containing public static members only. It provides information about the current function the compiler is processing such as parameter count and their sizes.
 
-        Its main purpose is to compute which function parameters will need to be stored on stack and which parameters will be passed through registers.
+        Its main purpose is to compute which function parameters will need to be stored on the stack and which parameters will be passed through registers.
 
         The processing method is called every time the \texttt{FUNCTION} iCode is reached.
 
@@ -686,9 +690,27 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
     The entry point is the \texttt{Allocator} class, precisely its static method \texttt{assignRegisters} that takes the basic block index as its parameter.
 
+        \subsection{Type support}
+
+        PicoBlaze-6 supports one byte integer operations only, some with possibility to reuse the carry bit (see Appendix \ref{instrset} for the list of available instructions).
+
+        Implementing floating point operations on such a simple device is neither feasible, nor actually usable. Emulating hardware support for any standard defining the format would result in huge memory use and each operation would take huge amounts of processor power.
+
+        Advised usage in this case is to connect a hardware FP circuit over the I/O pins.
+
+        \begin{table}[H]
+        \centering
+        \begin{tabularx}{0.9\textwidth}{*{7}{Y}}
+        \texttt{char} & \texttt{short} & \texttt{int} & \texttt{long} & \texttt{long~long}& \texttt{void*} & \texttt{void(*)()}\\
+        \hline
+        1             &         2      &        2     &         4     &         4          &        1        &          2 \\
+        \end{tabularx}
+        \caption{Basic types supported by the compiler}
+        \end{table}
+
         \subsection{Register Allocation}
 
-        The register management is handled in the \texttt{Register} class which is wrapped in \texttt{Bank} to provide the ability to switch the banks and pass operands between them.
+        The register management is handled in the \texttt{Register} class. Two sets of \texttt{Register} instances are aggregated each in one \texttt{Bank} instance to provide the ability to switch the banks and pass operands between them.
 
         When there is no free register available, the LRU\footnote{Least Recently Used} algorithm is applied to find the one that is to be freed and stored in the scratchpad memory until the next use.
 
@@ -708,33 +730,38 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         In most aspects, including the implemented interface, it is similar to the \texttt{Stack} (see Section \ref{stack}). The most important difference is no necessity to do anything on function calls and different implementation using only position in memory.
 
+        It grows in the opposite direction to the stack, from the highest possible address in the memory - address \texttt{0xFF}.
+
         As in the case of \texttt{Stack}, the variables are stored consecutively in big endian order.
 
     \section{Code Generator}
 
-    To avoid as much code duplication as possible, every instruction is being emitted using iteration over the \texttt{Emitter::i} variable.
+    To avoid as much code duplication as possible, every instruction is being emitted using iteration over the \texttt{Emitter::i} variable in the manner displayed in the following code snippet.
+
+    \begin{listing}
+    \centering
+    \begin{verbatim}for (Emitter::i = 0; Emitter::i < left->getType()->getSize(); Emitter::i++)
+    emit << I::Xor(result, right);\end{verbatim}
+    \caption{\texttt{Emitter} and \texttt{Instruction} example use}
+    \end{listing}
 
     All instruction classes inherit from the generic \texttt{I} class that also acts as their parent and enclosing class both. It defines the \texttt{toString} virtual method that the children implement. This method is used in the overloaded left shift operator of \texttt{Emitter} (see Section \ref{emitter}) and \texttt{I} to obtain the whole string representation of the operation and write it into the output file.
 
-        \subsection{Function and Call Generation}
-
-        Every function \todo{}
-
-        \subsection{Calling Conventions}
-        
-        \todo{caller saves}
+        \subsection{Calling Conventions}\label{callconv}
 
         The calling conventions were designed to utilize as much of the variables as possible because of the limited capabilities of the processor.
 
-        Registers are saved to the function's stack by the caller, considering liveness of the variables.
+        \emph{Caller saves} strategy is implemented by the compiler. That means the registers are saved to the function stack by the caller, not the callee function. Variable liveness is considered, dead variables are omitted.
 
-        The arguments are stored consecutively in little-endian order \footnote{The least significant byte is stored first, the most significant one last} in the registers.
+        The arguments are stored consecutively in little-endian order\footnote{The least significant byte is stored first, the most significant one last} in the registers.
+
+        By default, the first 8 registers are used for passing the arguments directly and the rest is stored on the stack of the callee. Their count can be modified by the compiler command line argument \texttt{--argregs=N}, with the maximum value of \texttt{N} being 13.
 
         For example, consider the following function:
 
         \begin{listing}
         \centering
-        \texttt{int mul4b(int l, int r);}
+        \texttt{int function(int l, long r);}
         \caption{Called function prototype}\label{lst:func}
         \end{listing}
 
@@ -746,7 +773,7 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
             \hline
             \texttt{s0} & \texttt{s1} & \texttt{s2} & \texttt{s3} & \texttt{s4} & \texttt{s5} & \texttt{s6} & \texttt{s7} \\
             \hline
-            \texttt{l[0]} & \texttt{l[1]} & \texttt{l[2]} & \texttt{l[3]} & \texttt{r[0]} & \texttt{r[1]} & \texttt{r[2]} & \texttt{r[3]} \\
+            \texttt{l[0]} & \texttt{l[1]} & \texttt{r[0]} & \texttt{r[1]} & \texttt{r[2]} & \texttt{r[3]} & free & free \\
             \hline
             \hline
             \texttt{s8} & \texttt{s9} & \texttt{sA} & \texttt{sB} & \texttt{sC} & \texttt{sD} & \texttt{sE} & \texttt{sF} \\
@@ -757,31 +784,27 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
         \caption{Register bank state when function from Listing \ref{lst:func} is called}\label{lst:regs}
         \end{listing}
 
-        The returned value is stored in the first registers in the same way as the parameters were stored. Little-endian order limits the register use in the caller to the bare minimum.
+        The returned value is stored in the first registers in the same way as the parameters were stored. Little-endian order limits the register use in the caller to the bare minimum. Returning structure values is not supported, pointer use is necessarry in this case.
 
-        Restoring of the saved registers is done in the caller, too.
+        After the function has returned, caller (according to the caller saves strategy) restores its variables back into registers.
 
         \subsection{Function Pointers}
 
         As mentioned in new feature overview (this particular change is discussed in Section \ref{kcpsm6cmp}), the processor now supports jumping to labels and calling functions that have their address loaded on run-time.
 
-        To make use of as much of the new specification as possible, the compiler supports calling function pointers using the \texttt{CALL@} instruction.
+        To make use of the new specification as much as possible, the compiler supports calling function pointers using the \texttt{CALL@} instruction.
 
         Prior to the instruction invocation itself, the function pointer is stored in the \texttt{sD} and \texttt{sE} registers. As the address of a function is larger than the size of one register, it has to be stored in two of them - \texttt{sD} contains the upper 4 bits of the address and \texttt{sE} the lower 8 bits.
 
-        Rather than limiting all functions' arguments to reserve the two registers for a possible function pointer call, only pointers to functions with lesser than 13 bytes worth of arguments is possible.
-
-        Other than this, there is no limitation to function pointer use.
-
-        \subsection{Register Bank Utilization}
+        \subsection{Register Bank Utilization}\label{rbank}
 
         From the perspective of register banks, there are two types of functions (as there are two banks). 
 
-        The first type is either function \texttt{main} or a state when the program has not entered \texttt{main} yet. This code has access only to variables stored in registers in Bank A.
+        The first type is either function \texttt{main} or a state when the program has not entered \texttt{main} yet - on initialization of global and static variables. This code has access only to variables stored in registers in Bank A.
 
-        The other type are all other functions. These have access to registers in Bank B.
+        The other types are all other functions. These have access to registers in Bank B.
 
-        Bank selection is handled from the code of the first type. This makes the other functions able to call any other function including itself. Any kind of recursion including \texttt{main} is not supported though.
+        The bank selection is handled from the code of the first type. This makes the other functions able to call any other function including itself. Any kind of recursion including \texttt{main} is not supported though.
 
         Before and after the call, bank has to be switched to the appropriate one. Also, if the function returned any value, it has to be transferred from the other bank to the current one before the bank is switched.
 
@@ -789,23 +812,23 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         \subsection{Assignment Generation}
 
-        There are differend cases we have to handle on assignment in the compiler.
+        There are different cases we have to handle on assignment in the compiler.
 
-            \subsubsection{Function call parameters}
+            \subsubsection{Function Call Parameters}
 
             The compiler detects when the assignment is done in a function call. This means the available operand registers are already full, so the following arguments need to be stored on stack.
 
             These assignments are done preemptively, the variables go on stack directly. The stack pointer in the function will handle these as if they were saved there in the function body directly.
 
-            \subsubsection{Dereferenced pointer assignment}
+            \subsubsection{Dereferenced Pointer Assignment}
 
-            The PicoBlaze-6 has only 256 bytes of scratchpad RAM (see Section \ref{mainfeatures}) - this means the pointers to variables take only one byte of memory.
+            The PicoBlaze-6 has only 256 bytes of scratchpad RAM (see Section \ref{mainfeatures}). This means the pointers to variables take only one byte of memory.
 
-            Assignment to these is done using the \texttt{STORE} instruction. However, \texttt{STORE} cannot take a literal as its source data argument. Therefore, a temporary operand is allocated and used for temporary storage of the data being store
+            Assignment to these variables is done using the \texttt{STORE} instruction. However, \texttt{STORE} cannot take a literal as its source data argument. Therefore, a temporary operand is allocated and used for temporary storage of the data being stored.
 
             \subsubsection{Temporary Variable on the Right Side}
 
-            This case occurs when a temporary variable with a life scope that does not reach beyond the sequence number of the iCode containing this assignment. This usually occurs on an immediate computation in an complex expression.
+            This case occurs when a temporary variable with a live scope that does not reach beyond the sequence number of the iCode containing this assignment. This usually occurs on an immediate computation in an complex expression.
 
             Instead of moving the variable, the registers are only reassigned to the result operand.
 
@@ -817,27 +840,25 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         \subsection{Stack and Variable Storage}
 
-        Local variables of the program are initially created in the registers. Only once there is not enough room for any other variable needed for an operation in future, it is freed from the register and stored on the stack.
+        Local variables of the program are initially created in the registers. Only once there is not enough room for any other variable needed for an operation in future, it is freed from the register and stored (\emph{spilled}) on the stack.
 
         Stack pointer is stored only in register \texttt{sF} only in Bank B. Stack pointer is not tracked in the \texttt{main} function. As does register bank selection, this also makes recursive calls to \texttt{main} impossible.
 
-        The \texttt{sF} register in \texttt{main} is used only as a temporary storage for loading literal values into registers in the other register bank and to access the local variables' addresses.
-
         \subsection{Arithmetic Operations}
 
-        Only basic arithmetic supported by the processor is implemented, that means there is no basic support for multiplication nor division of the variables.
+        Only basic arithmetic supported by the processor is implemented. More specifically, there is no basic support for neither multiplication nor division of the variables.
 
-        The functions to multiply can be extracted from the previous PBCC (see Section \ref{prev_pbcc}) and inserted as inline assembly in a separate function, according to the calling conventions.
+        The multiplication functions can be extracted from the previous PBCC (see Section \ref{prev_pbcc}) and inserted as inline assembly in a separate function, according to the calling conventions.
 
-        Other than that, the operations are utilizing the improved instructions handling multi-byte variables in minimum cycles.
+        The other arithmetic and logic operations of the C language are implemented, with focus on utilizing the new and improved instructions of PicoBlaze-6 to save computational cycles.
 
 
 
     \section{Compiled Assembly Properties}
 
-    The compiler is producing commented assembly to be given to an assembler which then in turn produces various its binary equivalents or other formats, for example suitable for simulation.
+    The compiler is producing commented assembly to be given to an assembler which then in turn produces its various binary equivalents or other formats, for example suitable for simulation.
 
-    In this section, the vital properties, required for getting grasp of the code (for its further modification by hand, for example), are discussed.
+    In this section, the vital properties, required for getting grasp of the code (for its further modification by hand or integrating hand tuned assembly code, for example), are discussed.
 
         \subsection{Comments in the Code}
 
@@ -862,7 +883,8 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
             \begin{verbatim}
             load    s4,     s0              ; iTemp0[0]=foo[0]
             load    s5,     s1              ; iTemp0[1]=foo[0]
-            add     s4,     0x2a            ; iTemp0[0]+=(value)
+            add     s4,     0x2a            ; iTemp0[0]+=42[0]
+            addcy   s5,     0x0             ; iTemp0[1]+=42[1]
                                             ; iTemp1=iTemp0
             sub     s4,     s2              ; iTemp1[0]-=bar[0]
             subcy   s5,     s3              ; iTemp1[1]-=bar[1]
@@ -871,23 +893,27 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
             \caption{Assembly output compiled from code in Listing \ref{lst:assign}}\label{lst:assignasm}
             \end{listing}
 
-            Each byte in the operation is covered with the regular C-style array notation.
+            Each byte in the operation is covered by the regular C-style array notation.
 
-            Also, notice only one byte of the literal value \texttt{42} (that is lower than the size of one byte) is being added to \texttt{iTemp0}. 
-
-            Moves on temporary variables to next variables in a more complex expressions are optimized out, too. They are marked in the assembly to point out that an other variable now resides in the particular registers.
+            Moves on temporary variables to next variables in a more complex expressions are optimized out, too. They are marked in the assembly to point out that another variable now resides in the particular registers.
 
             \subsubsection{Function Comments}
 
             Every function is prepended with a comment that states its name with a list of its arguments. Every argument's name is written in the list along with the registers it is stored in, in case it is not stored on stack directly.
 
-            For example, consider the following function:
+            Demonstrated on an example:
 
-            \begin{center}\texttt{char func(long arg1, int arg2, char arg3);}\end{center}
+            \begin{listing}
+            \centering
+            \texttt{char func(long arg1, int arg2, char arg3);}
+            \caption{Example function to be compiled}\label{functocomment}
+            \end{listing}
 
-            Its representation in the assembly will be prepended with this comment:
-
-            \begin{center}\texttt{; Function func, arguments: [arg1:\{s0,s1,s2,s3,\},arg2:\{s4,s5,\},arg3:\{s6,\},]}\end{center}
+            \begin{listing}
+            \centering
+            \texttt{; Function func, arguments: [arg1:\{s0,s1,s2,s3,\},arg2:\{s4,s5,\},arg3:\{s6,\},]}
+            \caption{Explanatory assembly comment before the label generated for Listing \ref{functocomment}}
+            \end{listing}
 
 \chapter{Port Features}\label{features}
 
@@ -907,16 +933,16 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
     \section{Built-in Functions}
 
-    The necessity to communicate with connected peripheries is satisfied by using the\texttt{char port\_in(char port)} and \texttt{void port\_out(char port, char value)} built-in functions.
+    The necessity to communicate with connected peripherals is satisfied by using the \texttt{char port\_in(char port)} and \texttt{void port\_out(char port, char value)} built-in functions.
 
-    They are compiled into \texttt{OUTPUT}, \texttt{OUTPUTK} and \texttt{INPUT} instructions, respectively. \texttt{OUTPUTK} is used when it is possible - that is, when both operands are constant and the port is in the range \texttt{0x0} -- \texttt{0xF}.
+    They are compiled into \texttt{OUTPUT}, \texttt{OUTPUTK} and \texttt{INPUT} instructions, respectively. \texttt{OUTPUTK} is used when it is possible. That is, when both operands are constant and the port is in the range \texttt{0x0} - \texttt{0xF}.
 
-    They don't follow calling conventions, the arguments are passed directly to the instruction. \texttt{INPUT} returns the read value into the operand where available.
+    As they are not really functions, when compiled to the assembly, there is no need to use the registers designated for function calling. The first available registers are used instead of \texttt{s0} and \texttt{s1} (as specified in Section \ref{callconv}).
 
 
 \chapter{Testing and Evaluation}\label{evaluation}
 
-It's necessary to evaluate the overall success of a compiler project by testing it a comparing to alternative. In this section, the testing and comparison methods are described.
+It is necessary to evaluate the overall success of a compiler project by testing it and comparing it to the alternatives. In this section, the testing and comparison methods are described.
 
     \section{Testing}\label{testing}
  
@@ -936,7 +962,7 @@ It's necessary to evaluate the overall success of a compiler project by testing 
 
             \subsubsection{Assembler}
 
-                The input to \texttt{PBlazSIM} are rich assembly languag files enhanced with binary representation of the code it is about to simulate. This format is compiled using \texttt{PBlazASM} (see Section \ref{pblazasm}) using the \texttt{\-l} flag and results in a file with \texttt{.LST} extension.
+                The input to \texttt{PBlazSIM} are rich assembly language files enhanced with binary representation of the code it is about to simulate. This format is compiled using \texttt{PBlazASM} (see Section \ref{pblazasm}) using the \texttt{\-l} flag and results in a file with \texttt{.LST} extension.
 
                 There were no special modifications required to get the needed results except the ones mentioned in Section \ref{pblazasm}.
 
@@ -958,14 +984,14 @@ It's necessary to evaluate the overall success of a compiler project by testing 
             \begin{tabular}{ r | l }
                 \texttt{stored\_somewhere} & Array, bounds undefined. \\
                 & Each value contained in it is looked for in the memory and \\
-                & register dump. The value can be contained be anywhere. \\
+                & register dump. The value can be contained anywhere. \\
 
                 \texttt{stored\_there} & Array of 256 values. \\
                 & If there is a value X on position Y, the memory has to contain \\
                 & value X on position Y too. \\
 
                 \texttt{bankA} & Array of 16 values. \\
-                & Contains a value for each of the registers register in the bank. \\
+                & Contains a value for each of the registers in the bank. \\
 
                 \texttt{bankB} & Analogic to \texttt{bankA}, for bank B.
 
@@ -988,70 +1014,82 @@ It's necessary to evaluate the overall success of a compiler project by testing 
                 \texttt{bankA = \{0, 0, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\}};
             \end{center}
 
-            Note that the first value is in decimal system, the second one is octal and the last one hexadecimal.
-
         \subsection{Test Cases}
 
             This is the list of the included and applied test cases that were also ran and checked in the simulator.
 
             \begin{center}
             \begin{tabular}{ r | l }
-                \texttt{null.c} & Does not compute anything, tests if the whole stack works \\
-                \texttt{basic.c} & Basic variable assignment \\
-                \texttt{arith.c} & Addition and subtraction \\
-                \texttt{logic.c} & Binary operation on the variables \\
-                \texttt{muldiv.c} & Multiplication and division \\
-                \texttt{cond\_simple.c} & Simple condition evaluation \\
-                \texttt{cond\_complex.c} & Complicated condition evaluation \\
-                \texttt{func\_basic.c} & Basic function calling \\
-                \texttt{func\_ptr.c} & Function pointer calling \\
-                \texttt{func\_recurs.c} & Recursive function calling \\
-                \texttt{struct.c} & Structure operations \\
+                \texttt{null} & Does not compute anything, tests if the whole stack works \\
+                \texttt{basic} & Basic variable assignment \\
+                \texttt{arithmetics} & Addition and subtraction \\
+                \texttt{array} & Array (pointer) data assignment and reading \\
+                \texttt{bitoper} & Binary operations on the variables \\
+                \texttt{cond\_simple} & Simple condition evaluation \\
+                \texttt{cond\_complex} & Complicated condition and cycle evaluation \\
+                \texttt{func\_simple} & Basic function calling \\
+                \texttt{func\_recursive} & Recursive function calling \\
+                \texttt{func\_ptr} & Function pointer calling \\
+                \texttt{struct} & Structure operations \\
             \end{tabular}
             \end{center}
 
+            The code of the tests is completely synthetic, with no real world purpose. Some variables had to be defined as \texttt{volatile}, to avoid their optimization which would remove some of them completely, defeating the purpose of testing the mentioned features.
+
     \section{Evaluation}
 
-    \todo{dolpnit/prepsat podle toho jak to nakonec vyjde}
+    Due to the fact neither the source code of PBCC by Bohumil Nováček nor PCComp is publicly available, also considering the simplicity of the other compilers, only the previous PBCC projekt by Jakub Horník was used in comparison (see Chapter \ref{existing} for more details).
 
-    To evaluate this project in comparison to the other alternatives (listed in Section \ref{existing}), the same test cases were used as in the functionality testing (described in Section \ref{testing}).
+    The same test cases were used as in the functionality testing (described in Section \ref{testing}).
 
     The tests were designed to be compileable in all other compilers, except the cases when an unavailable feature is being tested.
 
-    The metric of quality (in case the program compiles and is valid) was chosen to be the count of used instructions.
-
-    A table with a matrix of test results, with a comment for the most characteristic ones follows.
+    The quality metric (in case the program compiles and is valid) was chosen to be the count of used instructions.
 
     \begin{table}[H]
+    \definecolor{lightlightgray}{gray}{0.95}
+    \rowcolors{1}{lightlightgray}{}
     \centering
-    \emph{\checkmark(instructions)} for succeeded, \emph{$\times$(reason)} for failed
-    \begin{tabular}{| r | c | c | c |}
-    \hline
-                         &        PBCCv3         &     PBCCv2 (Horník)     &       PCComp       \\
+    \begin{tabularx}{0.8\textwidth}{r *{2}{Y}}
 \hline
-\hline\verb|basic|       &\checkmark             &\checkmark               &          \checkmark\\
-\hline\verb|arith|       &\checkmark             &\checkmark               &$\times$(no support)\\
-\hline\verb|logic|       &\checkmark             &\checkmark               &   $\times$(invalid)\\
-\hline\verb|cond_simple| &\checkmark             &\checkmark               &          \checkmark\\
-\hline\verb|cond_complex|&$\times$(invalid)      &\checkmark               &          \checkmark\\
-\hline\verb|func_basic|  &\checkmark             &\checkmark               &          \checkmark\\
-\hline\verb|func_ptr|    &\checkmark             &$\times$(no support)     &$\times$(no support)\\
-\hline\verb|func_recurs| &\checkmark             &\checkmark               &$\times$(invalid)   \\
-\hline\verb|struct|      &\checkmark             &\checkmark               &$\times$(no support)\\
-\hline\verb|I/O|         &\checkmark             &\checkmark               &          \checkmark\\
+test case          & PBCCv3 (this project) &     PBCCv2 (Horník)     \\
 \hline
-    \end{tabular}
+\verb|basic|       &\checkmark(\textbf{23})&\checkmark(62)           \\
+\verb|arithmetics| &\checkmark(\textbf{19})&\checkmark(26)           \\
+\verb|array|       &\checkmark(\textbf{70})&$\times$(internal error) \\
+\verb|bitoper|     &\checkmark(\textbf{29})&\checkmark(49)           \\
+\verb|cond_simple| &\checkmark(\textbf{56})&\checkmark(87)           \\
+\verb|cond_complex|&\checkmark(\textbf{33})&\checkmark(53)           \\
+\verb|func_simple| &\checkmark(\textbf{35})&\checkmark(51)           \\
+\verb|func_recurs| &\checkmark(\textbf{44})&$\times$(infinite recursion)\\
+\verb|func_ptr|    &\checkmark(\textbf{51})&$\times$(no support)     \\
+\verb|struct|      &\checkmark(55)         &\checkmark(\textbf{52})           \\
+\hline
+
+    \end{tabularx}
+
+    \emph{\checkmark(instruction count)} for succeeded cases, \emph{$\times$(reason)} for failed cases
     \caption{Test results}
     \end{table}
 
+    PBCCv3 gives shorter code for most test cases, except the cases when PBCCv2 fails. In PBCCv2, cases \texttt{array} and \texttt{func\_ptr} failed in the compilation phase and no output was produced. The test case \texttt{func\_recurs} compiled fine. However, when simulated, the processor got stuck in an infinite call loop and stopped eventually.
+
+    The only case when PBCCv2 gives shorter code is for the \texttt{struct} test case. This is caused by the slight overhead needed for calling a function between register banks (explained in Section \ref{rbank}).
+
 \chapter{Conclusion}\label{conclusion}
 
-The back-end project was started from scratch except for som wrapper code, therefore the expected functionality was not a complete C compiler. The implemented subset is able to compute a wide range of test applications.
+The back-end project was started from scratch except for some output wrapper code, therefore the expected functionality was not a complete C compiler. The implemented subset is able to compile a wide range of test applications.
 
-However, the real world usability of the compiled programs is not very high because of incomplete implementation of conditional jumps.
+Considering the produced code quality, the compiler is better, compared to the alternatives. On the applied test set, the produced code is on average 33\% shorter than the code compiled with the previous PBCC. It is also more understandable by the extensive usage of generated explanatory comments.
 
-If taken as an excersise and exploration of the limits of the processor, the project succeeded. Function pointers are really usable and testing applications utilizing them work correctly.
+If taken as an exercise and exploration of the limits of the processor, the project succeeded, too. Function pointers are really usable and testing applications utilizing them work correctly. There is also basic support for pointer assignment which is then utilized in array and structure usage.
 
+\section{Future Development}
 
+The compiler was tested on synthetic cases only. Real world complex applications are needed to be tested with the compiler to have potential issues or inefficiencies fixed.
+
+Some features lack at this moment, too, such as an implementation of integer division and multiplication or interrupt table generation.
+
+The back-end was also designed to be partially portable to other front-ends. It could be used with LLVM, for example, to achieve the ability to compile programs written in other languages. too.
 
 %=========================================================================

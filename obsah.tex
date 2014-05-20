@@ -965,7 +965,7 @@ It is necessary to evaluate the overall success of a compiler project by testing
                 The input to \texttt{PBlazSIM} are rich assembly language files enhanced with binary representation of the code it is about to simulate. This format is compiled using \texttt{PBlazASM} (see Section \ref{pblazasm}) using the \texttt{\-l} flag and results in a file with \texttt{.LST} extension.
 
                 There were no special modifications required to get the needed results except the ones mentioned in Section \ref{pblazasm}.
-
+\newpage
         \subsection{The Framework}
 
         All scripts are ran recursively for each \texttt{.c} and \texttt{.tst} file in the \texttt{test} directory in the root of the code tree.
@@ -1013,7 +1013,7 @@ It is necessary to evaluate the overall success of a compiler project by testing
             \begin{center}
                 \texttt{bankA = \{0, 0, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\}};
             \end{center}
-
+\newpage
         \subsection{Test Cases}
 
             This is the list of the included and applied test cases that were also ran and checked in the simulator.
@@ -1029,7 +1029,7 @@ It is necessary to evaluate the overall success of a compiler project by testing
                 \texttt{cond\_complex} & Complicated condition and cycle evaluation \\
                 \texttt{func\_simple} & Basic function calling \\
                 \texttt{func\_recursive} & Recursive function calling \\
-                \texttt{func\_ptr} & Function pointer calling \\
+                \texttt{func\_ptr} & Function pointer calling - functionally equivalent to \texttt{func\_recursive} \\
                 \texttt{struct} & Structure operations \\
             \end{tabular}
             \end{center}

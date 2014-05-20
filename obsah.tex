@@ -1,5 +1,6 @@
 %=========================================================================
 % (c) Michal Bidlo, Bohuslav Křena, 2008
+%emitter priklad
 
 \definecolor{gray}{gray}{0.5}
 \newcommand{\todo}[1]{\textcolor{red}{TODO\:} \textcolor{gray}{#1}}
@@ -33,7 +34,7 @@ However, Currently, there is no other C compiler designed especially for the Pic
 
     \section{History}
 
-    Historically, the name of the design was \texttt{KCPSM}, for Ken Chapman's Programmable State Machine and then Constant Coded Programmable State Machine. This term is now still used in the FPGA design - the \emph{VHDL}\footnote{\emph{VHSIC} (Very High Speed Integrated Circuit) Hardware Description Language} components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor \cite{DSPwFPGA}.
+    Historically, the name of the design was \texttt{KCPSM}, for Ken Chapman's Programmable State Machine and then Constant Coded Programmable State Machine. This term is now still used in the FPGA design - the \emph{VHDL}\footnote{\emph{VHSIC} (Very High Speed Integrated Circuit) Hardware Description Language} and Verilog components are still caled \texttt{kcpsmX} where \texttt{X} stands for the version of the processor \cite{DSPwFPGA}.
 
         \subsection{PicoBlaze}
 
@@ -41,21 +42,21 @@ However, Currently, there is no other C compiler designed especially for the Pic
 
         The initial PicoBlaze was very simple, especially compared to the current one. There was only space for 256 instructions in the program memory and there was no RAM. Only 16 8-bit registers were available to be used for storage. However, it is possible to connect an external memory through the 256 I/O pins.
 
-        The multi-byte instructions for arithmetic (\texttt{ADDCY} and \texttt{SUBCY}) were included since the very beginning.
+        The multi-byte instructions for arithmetics (\texttt{ADDCY} and \texttt{SUBCY}) were included since the very beginning.
 
-        There was no dedicated instruction for comparing values but both the zero and carry flags were already present \cite{PicoBlaze}.
+        There was no dedicated instruction for value comparison but both the zero and carry flags were already present \cite{PicoBlaze}.
 
         \subsection{PicoBlaze-2}
 
-        The second version of the processor was initially released on 17th December 2002.
+        The second version of the processor was initially released in December 2002.
 
         The program could consist of 1024 instructions at most and there was no scratchpad memory for runtime variables. The instructions were able to operate only with the 32 8-bit registers and constant values.
 
-        No changes were done to the instruction set from PicoBlaze \cite{PicoBlaze2}.
+        The PicoBlaze instruction set remained the same in this revision.\cite{PicoBlaze2}.
 
         \subsection{PicoBlaze-3}
 
-        First release of the previous version, 3, of PicoBlaze was released on 20th May 2004. Its last revision, 7, was released in October 2003.
+        First release of the previous version, 3, of PicoBlaze was released in May 2003. Its last revision, was released in August 2004.
 
         The register count was reduced to 16 while their size has been kept the same. The main addition in this version is the 64 byte large scratchpad memory, that eliminates the need of an external memory connected through the I/O ports.
 
@@ -71,7 +72,7 @@ However, Currently, there is no other C compiler designed especially for the Pic
 
     \section{Main Features}\label{mainfeatures}
 
-    PicoBlaze is a \emph{RISC}\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles \cite{PicoBlazeWeb} \cite{PicoBlaze6}.
+    PicoBlaze is a \emph{RISC}\footnote{Reduced Instruction Set Computing}, Harvard architecture\footnote{The program code and the data memory are stored in separate locations} processor. Every instruction is executed in 2 clock cycles \cite{PicoBlaze6}.
 
     \begin{table}[H]
     \centering
@@ -89,10 +90,10 @@ However, Currently, there is no other C compiler designed especially for the Pic
                                     & Compares and tests \\
                                     & Implements carry and zero flags \\
 
-        FPGA design & Can be included directly in the VHDL code \\
+        FPGA design & Can be included directly in the hardware code \\
                     & No other equipment or code needed \\
     \end{tabular}
-    \caption{PicoBlaze-6 features}
+    \caption{PicoBlaze-6 features} \cite{PicoBlazeWeb}
     \end{table}
 
     \section{Practical usage}
@@ -163,7 +164,7 @@ However, Currently, there is no other C compiler designed especially for the Pic
 
     Due to the higher versatility, \emph{PacoBlaze} is not as efficient (resource-wise) as the original implementation but it enables the user to remove unneeded parts from the processor and use its smallest required subset, therefore reducing FPGA space use as the result.
 
-    The latest version is 2.2 that was released in the year 2007 so it cannot possibly implement the new instructions of PicoBlaze-6 that this project tries to use as much as possible \cite{PacoBlaze}.
+    The latest version is 2.2 (released in 2007) so it cannot possibly implement the new instructions of PicoBlaze-6 that this project tries to use as much as possible \cite{PacoBlaze}.
 
     \section{PicoBlaze Assemblers}
 
@@ -717,9 +718,11 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
         \subsection{Function and Call Generation}
 
-        Every function 
+        Every function \todo{}
 
         \subsection{Calling Conventions}
+        
+        \todo{caller saves}
 
         The calling conventions were designed to utilize as much of the variables as possible because of the limited capabilities of the processor.
 
@@ -910,8 +913,6 @@ The port itself is written in C++ with a layer wrapping the C internals of SDCC.
 
     They don't follow calling conventions, the arguments are passed directly to the instruction. \texttt{INPUT} returns the read value into the operand where available.
 
-    
-
 
 \chapter{Testing and Evaluation}\label{evaluation}
 
@@ -955,9 +956,18 @@ It's necessary to evaluate the overall success of a compiler project by testing 
 
             \begin{center}
             \begin{tabular}{ r | l }
-                \texttt{stored\_somewhere} & \todo{...}\\
+                \texttt{stored\_somewhere} & Array, bounds undefined. \\
+                & Each value contained in it is looked for in the memory and \\
+                & register dump. The value can be contained be anywhere. \\
 
-                \texttt{stored\_there} & \todo{...}\\
+                \texttt{stored\_there} & Array of 256 values. \\
+                & If there is a value X on position Y, the memory has to contain \\
+                & value X on position Y too. \\
+
+                \texttt{bankA} & Array of 16 values. \\
+                & Contains a value for each of the registers register in the bank. \\
+
+                \texttt{bankB} & Analogic to \texttt{bankA}, for bank B.
 
             \end{tabular}
             \end{center}
@@ -972,26 +982,37 @@ It's necessary to evaluate the overall success of a compiler project by testing 
                 \texttt{stored\_somewhere = \{1, 002, 0x3\};}
             \end{center}
 
+            And the following declaration says register \texttt{s2} has to contain value \texttt{0xFF} - other registers are omitted (because they are equal to zero).
+
+            \begin{center}
+                \texttt{bankA = \{0, 0, 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0\}};
+            \end{center}
+
             Note that the first value is in decimal system, the second one is octal and the last one hexadecimal.
 
         \subsection{Test Cases}
 
-            \todo{Hodi se poznamenat, ze testy presne pod temito nazvy zatim neexistuji, jsou tak nejak random}
+            This is the list of the included and applied test cases that were also ran and checked in the simulator.
+
             \begin{center}
             \begin{tabular}{ r | l }
                 \texttt{null.c} & Does not compute anything, tests if the whole stack works \\
                 \texttt{basic.c} & Basic variable assignment \\
-                \texttt{addsub.c} & Addition and subtraction \\
-                \texttt{bitlogic.c} & Binary operation on the variables \\
+                \texttt{arith.c} & Addition and subtraction \\
+                \texttt{logic.c} & Binary operation on the variables \\
                 \texttt{muldiv.c} & Multiplication and division \\
-                \texttt{condsimple.c} & Simple condition evaluation \\
-                \texttt{condcomplex.c} & Complicated condition evaluation \\
-                \texttt{function.c} & Function calling \\
-                \texttt{funcpointer.c} & Function calling \\
+                \texttt{cond\_simple.c} & Simple condition evaluation \\
+                \texttt{cond\_complex.c} & Complicated condition evaluation \\
+                \texttt{func\_basic.c} & Basic function calling \\
+                \texttt{func\_ptr.c} & Function pointer calling \\
+                \texttt{func\_recurs.c} & Recursive function calling \\
+                \texttt{struct.c} & Structure operations \\
             \end{tabular}
             \end{center}
 
     \section{Evaluation}
+
+    \todo{dolpnit/prepsat podle toho jak to nakonec vyjde}
 
     To evaluate this project in comparison to the other alternatives (listed in Section \ref{existing}), the same test cases were used as in the functionality testing (described in Section \ref{testing}).
 
@@ -1008,15 +1029,15 @@ It's necessary to evaluate the overall success of a compiler project by testing 
     \hline
                          &        PBCCv3         &     PBCCv2 (Horník)     &       PCComp       \\
 \hline
-\hline\verb|basic|       &\checkmark(\textbf{50})&\checkmark               &          \checkmark\\
-\hline\verb|arith|       &\checkmark(24)         &\checkmark               &$\times$(no support)\\
-\hline\verb|logic|       &\checkmark(23)         &\checkmark               &   $\times$(invalid)\\
+\hline\verb|basic|       &\checkmark             &\checkmark               &          \checkmark\\
+\hline\verb|arith|       &\checkmark             &\checkmark               &$\times$(no support)\\
+\hline\verb|logic|       &\checkmark             &\checkmark               &   $\times$(invalid)\\
 \hline\verb|cond_simple| &\checkmark             &\checkmark               &          \checkmark\\
-\hline\verb|cond_complex|&\checkmark             &\checkmark               &          \checkmark\\
+\hline\verb|cond_complex|&$\times$(invalid)      &\checkmark               &          \checkmark\\
 \hline\verb|func_basic|  &\checkmark             &\checkmark               &          \checkmark\\
-\hline\verb|func_ptr|    &\checkmark             &\checkmark               &          \checkmark\\
-\hline\verb|func_recurs| &\checkmark             &\checkmark               &          \checkmark\\
-\hline\verb|struct|      &\checkmark             &\checkmark               &          \checkmark\\
+\hline\verb|func_ptr|    &\checkmark             &$\times$(no support)     &$\times$(no support)\\
+\hline\verb|func_recurs| &\checkmark             &\checkmark               &$\times$(invalid)   \\
+\hline\verb|struct|      &\checkmark             &\checkmark               &$\times$(no support)\\
 \hline\verb|I/O|         &\checkmark             &\checkmark               &          \checkmark\\
 \hline
     \end{tabular}

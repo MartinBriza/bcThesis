@@ -63,6 +63,13 @@ r - register, p - address in register, cX - constant, size, l - label
 \verb|SLX|&\verb|r|&\verb||& Shift left, fill LSB \\ \hline
 \verb|SLA|&\verb|r|&\verb||& Shift left, fill carry \\ \hline
 \verb|RL|&\verb|r|&\verb||& Rotate left \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+r - register, p - address in register, cX - constant, size, l - label
+\begin{tabular}{| r | c | c | l |}\hline
 \verb|SR0|&\verb|r|&\verb||& Shift right, fill 0 \\ \hline
 \verb|SR1|&\verb|r|&\verb||& Shift right, fill 1 \\ \hline
 \verb|SRX|&\verb|r|&\verb||& Shift right, fill LSB \\ \hline
@@ -71,13 +78,7 @@ r - register, p - address in register, cX - constant, size, l - label
 
 \verb|REGBANK|&\verb|A|&\verb||& Select bank A \\ \hline
 \verb|REGBANK|&\verb|B|&\verb||& Select bank B \\ \hline
-\end{tabular}
-\end{table}
 
-\begin{table}[H]
-\centering
-r - register, p - address in register, cX - constant, size, l - label
-\begin{tabular}{| r | c | c | l |}\hline
 \verb|INPUT|&\verb|r|&\verb|p|& Read data from a port \\ \hline
 \verb|INPUT|&\verb|r|&\verb|c8|& Read data from a port \\ \hline
 \verb|OUTPUT|&\verb|r|&\verb|p|& Write data to a port \\ \hline

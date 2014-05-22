@@ -20,13 +20,14 @@ If you compile the project from new source directly, please follow the steps lis
 To run the compiled binary (especially on \texttt{merlin.fit.vutbr.cz}), you need to link against the correct \texttt{libstdc++} on runtime.
 To do so on \texttt{merlin}, add the following path to your \texttt{LD\_LIBRARY\_PATH}:
 
+\begin{center}\verb|/pub/tmp/gcc/gcc-4.9.0/.x86_64-linux/x86_64-linux/libstdc++-v3/src/.libs|\end{center}
+
 \section{Usage}
 
 To use the \texttt{pblaze} port, specify the \texttt{-mpblaze} command line option to the \texttt{sdcc} binary.
 
 To change the size of the function arguments to be passed via registers, use the \texttt{--argreg=N} option, specifying the count of the registers.
 
-\begin{center}\verb|/pub/tmp/gcc/gcc-4.9.0/.x86_64-linux/x86_64-linux/libstdc++-v3/src/.libs|\end{center}
 
 \chapter{PicoBlaze-6 Instruction Set}\label{instrset}
 \begin{table}[H]
